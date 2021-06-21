@@ -1,6 +1,5 @@
 package exceptions;
 
-@SuppressWarnings("serial")
 public class TargetNotReachedException extends ArmyException {
 
 	public TargetNotReachedException() {

@@ -1,6 +1,5 @@
 package exceptions;
 
-@SuppressWarnings("serial")
 public class FriendlyCityException extends ArmyException {
 
 	public FriendlyCityException() {

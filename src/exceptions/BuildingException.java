@@ -1,6 +1,5 @@
 package exceptions;
 
-@SuppressWarnings("serial")
 public abstract class BuildingException extends EmpireException {
 	public BuildingException()
 	{

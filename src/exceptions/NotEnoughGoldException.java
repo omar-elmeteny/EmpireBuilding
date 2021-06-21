@@ -1,6 +1,5 @@
 package exceptions;
 
-@SuppressWarnings("serial")
 public class NotEnoughGoldException extends BuildingException {
 
 	public NotEnoughGoldException() {

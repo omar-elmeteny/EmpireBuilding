@@ -1,6 +1,5 @@
 package exceptions;
 
-@SuppressWarnings("serial")
 public class MaxRecruitedException extends BuildingException {
 
 	public MaxRecruitedException() {
