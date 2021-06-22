@@ -27,8 +27,9 @@ public class HomeView extends JPanel{
     private JButton[] cityButtons;
     private JButton startGameButton;
     private JPanel startButtonContainer;
+    private String selectedCity;
 
-    public HomeView() throws IOException{
+    public HomeView(MainWindow mainWindow) throws IOException{
         super();
         this.setBackground(new Color(255, 228, 196));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -76,6 +77,7 @@ public class HomeView extends JPanel{
         GridLayout citiesGrid = new GridLayout();
         citiesGrid.setRows(1);
         citiesGrid.setColumns(cityNames.size());
+        citiesGrid.setHgap(2);
         citiesContainer.setLayout(citiesGrid);
         cityButtons = new JButton[cityNames.size()];
         for(int i = 0;i < cityNames.size();i++){
@@ -84,6 +86,7 @@ public class HomeView extends JPanel{
             cityButtons[i].setForeground(Color.WHITE);
             cityButtons[i].setFont(new Font(Font.SERIF, Font.BOLD, 40));
             cityButtons[i].setText(cityNames.get(i));
+            cityButtons[i].addMouseListener(new SelectCityButtonListener(this));
             citiesContainer.add(cityButtons[i]);
         }
         this.add(citiesContainer);
@@ -98,7 +101,32 @@ public class HomeView extends JPanel{
         startGameButton.setForeground(Color.WHITE);
         startGameButton.setFont(new Font(Font.SERIF, Font.PLAIN, 15));
         startGameButton.setText("Start Game");
+        startGameButton.addMouseListener(new StartGameButtonListener(mainWindow));
         startButtonContainer.add(startGameButton, BorderLayout.CENTER);
 
     }
+
+    public String getSelectedCity() {
+        return selectedCity;
+    }
+
+    public void setSelectedCity(String selectedCity) {
+        this.selectedCity = selectedCity;
+        for(int i = 0;i < cityButtons.length;i++){
+            JButton button = cityButtons[i];
+            String cityName = button.getText();
+            if(cityName.equals(selectedCity))
+                button.setBackground(new Color(20, 108, 76));
+            else
+                button.setBackground(new Color(86, 94, 100));   
+        }
+    }
+
+    public String getPlayerName(){
+        String name = this.nameField.getText();
+        if(name == null)
+            return "";
+        return name.trim();
+    }
+
 }
