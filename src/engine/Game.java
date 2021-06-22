@@ -50,6 +50,26 @@ public class Game {
 
 	}
 
+	public static ArrayList<String> getCityNames() throws IOException {
+
+		BufferedReader br = new BufferedReader(new FileReader("distances.csv"));
+		String currentLine = br.readLine();
+		ArrayList<String> names = new ArrayList<String>();
+
+		while (currentLine != null) {
+
+			String[] content = currentLine.split(",");
+			if (!names.contains(content[0])) {
+				names.add(content[0]);
+			} else if (!names.contains(content[1])) {
+				names.add(content[1]);
+			}
+			currentLine = br.readLine();
+		}
+		br.close();
+		return names;
+	}
+
 	private void loadCitiesAndDistances() throws IOException {
 
 		BufferedReader br = new BufferedReader(new FileReader("distances.csv"));
