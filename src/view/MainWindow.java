@@ -10,6 +10,7 @@ import engine.Game;
 public class MainWindow extends JFrame{
 
     private HomeView homeView;
+    private GameView gameView;
     private Game game;
 
     public MainWindow() throws IOException{
@@ -33,6 +34,9 @@ public class MainWindow extends JFrame{
         }
         game = new Game(homeView.getPlayerName(), homeView.getSelectedCity());
         homeView.setVisible(false);
+
+        gameView = new GameView(game);
+        this.add(gameView);
     }
 
 }
