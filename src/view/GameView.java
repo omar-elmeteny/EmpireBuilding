@@ -10,7 +10,7 @@ public class GameView extends JPanel{
     
     private SummaryView summaryView;
     private MapView mapView;
-    private SideView sideView;
+    // private SideView sideView;
 
     public GameView(Game game) throws IOException{
         super();
@@ -18,7 +18,7 @@ public class GameView extends JPanel{
         summaryView = new SummaryView(game);
         this.add(summaryView, BorderLayout.NORTH);
 
-        mapView = new MapView();
+        mapView = new MapView(game);
         this.add(mapView, BorderLayout.CENTER);
     }
 
