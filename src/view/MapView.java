@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
 
 import engine.City;
 import engine.Distance;
@@ -78,12 +79,12 @@ class ArmyButton extends JButton {
     private static BufferedImage infantryImage;
 
     public ArmyButton(Army army, MapView mapView) {
-        super();
         this.mapView = mapView;
+        this.army = army;
+
         setOpaque(false);
         setContentAreaFilled(false);
         setText(null);
-        this.army = army;
 
         try {
             if (archerImage == null) {
@@ -264,6 +265,24 @@ class MapComponentListener extends ComponentAdapter {
     }
 }
 
+class CityButtonListener extends MouseInputAdapter {
+
+
+    private GameView gameView;
+
+    public CityButtonListener(GameView gameView) {
+        super();
+        this.gameView = gameView;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        String cityName = ((JButton) e.getComponent()).getText();
+        gameView.showCityView(cityName);
+    }
+
+}
+
 public class MapView extends JPanel {
 
     private BufferedImage image;
@@ -271,10 +290,14 @@ public class MapView extends JPanel {
     private JButton[] cityButtons;
     private Hashtable<Army, ArmyButton> armyButtons;
     private Hashtable<ButtonContainerKey, ArmyButtonContainer> armyButtonContainers;
+    private GameView gameView;
+   
 
-    public MapView(Game game) throws IOException {
+    public MapView(Game game, GameView gameView) throws IOException {
         this.game = game;
+        this.gameView = gameView;
         this.setLayout(null);
+        setOpaque(false);
         image = ImageIO.read(new File("map.png"));
 
         cityButtons = new JButton[game.getAvailableCities().size()];
@@ -284,6 +307,7 @@ public class MapView extends JPanel {
             cityButtons[i].setText(city.getName());
             cityButtons[i].setOpaque(false);
             cityButtons[i].setContentAreaFilled(false);
+            cityButtons[i].addMouseListener(new CityButtonListener(gameView));
             this.add(cityButtons[i]);
             updateCityButton(cityButtons[i]);
         }
