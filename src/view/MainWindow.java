@@ -22,7 +22,7 @@ public class MainWindow extends JFrame{
         super();
         this.setTitle("Empire Building");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(600, 400);
+        this.setSize(1500, 800);
 
         homeView = new HomeView(this);
         this.add(homeView);

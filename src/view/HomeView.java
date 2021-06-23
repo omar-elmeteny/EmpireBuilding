@@ -4,22 +4,65 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.MouseInputAdapter;
 
 import engine.Game;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class HomeView extends JPanel{
-    
+class StartGameButtonListener extends MouseInputAdapter {
+
+    private MainWindow mainWindow;
+
+    public StartGameButtonListener(MainWindow mainWindow) {
+        super();
+        this.mainWindow = mainWindow;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        try {
+            mainWindow.startGame();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+}
+class SelectCityButtonListener extends MouseInputAdapter {
+
+    private HomeView homeView;
+
+    public SelectCityButtonListener(HomeView homeView) {
+        this.homeView = homeView;
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        super.mouseClicked(e);
+        JButton button = (JButton) e.getComponent();
+        String cityName = button.getText();
+        if (cityName.equals(homeView.getSelectedCity()))
+            homeView.setSelectedCity(null);
+        else
+            homeView.setSelectedCity(cityName);
+    }
+}
+
+public class HomeView extends JPanel {
+
     private JLabel titleLabel;
     private JLabel teamLabel;
-    private JLabel messageLabel; 
+    private JLabel messageLabel;
     private JPanel nameContainer;
     private JLabel nameLabel;
     private JTextField nameField;
@@ -29,7 +72,7 @@ public class HomeView extends JPanel{
     private JPanel startButtonContainer;
     private String selectedCity;
 
-    public HomeView(MainWindow mainWindow) throws IOException{
+    public HomeView(MainWindow mainWindow) throws IOException {
         super();
         this.setBackground(new Color(255, 228, 196));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -49,7 +92,8 @@ public class HomeView extends JPanel{
 
         this.add(Box.createRigidArea(new Dimension(0, 5)));
 
-        messageLabel = new JLabel("Please enter your name and select a city then click \"Start Game\" button to begin.");
+        messageLabel = new JLabel(
+                "Please enter your name and select a city then click \"Start Game\" button to begin.");
         messageLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -58,10 +102,9 @@ public class HomeView extends JPanel{
         this.add(Box.createRigidArea(new Dimension(0, 5)));
 
         nameContainer = new JPanel(new BorderLayout());
-        nameContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE,10));
+        nameContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
         nameContainer.setOpaque(false);
         this.add(nameContainer);
-        
 
         nameLabel = new JLabel("Your Name: ");
         nameLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
@@ -72,7 +115,7 @@ public class HomeView extends JPanel{
 
         this.add(Box.createRigidArea(new Dimension(0, 5)));
 
-        ArrayList<String> cityNames =  Game.getCityNames();
+        ArrayList<String> cityNames = Game.getCityNames();
         citiesContainer = new JPanel();
         GridLayout citiesGrid = new GridLayout();
         citiesGrid.setRows(1);
@@ -80,7 +123,7 @@ public class HomeView extends JPanel{
         citiesGrid.setHgap(2);
         citiesContainer.setLayout(citiesGrid);
         cityButtons = new JButton[cityNames.size()];
-        for(int i = 0;i < cityNames.size();i++){
+        for (int i = 0; i < cityNames.size(); i++) {
             cityButtons[i] = new JButton();
             cityButtons[i].setBackground(new Color(86, 94, 100));
             cityButtons[i].setForeground(Color.WHITE);
@@ -94,7 +137,7 @@ public class HomeView extends JPanel{
         this.add(Box.createRigidArea(new Dimension(0, 5)));
 
         startButtonContainer = new JPanel(new BorderLayout());
-        startButtonContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE,10));
+        startButtonContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
         this.add(startButtonContainer);
         startGameButton = new JButton();
         startGameButton.setBackground(new Color(20, 108, 76));
@@ -112,19 +155,19 @@ public class HomeView extends JPanel{
 
     public void setSelectedCity(String selectedCity) {
         this.selectedCity = selectedCity;
-        for(int i = 0;i < cityButtons.length;i++){
+        for (int i = 0; i < cityButtons.length; i++) {
             JButton button = cityButtons[i];
             String cityName = button.getText();
-            if(cityName.equals(selectedCity))
+            if (cityName.equals(selectedCity))
                 button.setBackground(new Color(20, 108, 76));
             else
-                button.setBackground(new Color(86, 94, 100));   
+                button.setBackground(new Color(86, 94, 100));
         }
     }
 
-    public String getPlayerName(){
+    public String getPlayerName() {
         String name = this.nameField.getText();
-        if(name == null)
+        if (name == null)
             return "";
         return name.trim();
     }
