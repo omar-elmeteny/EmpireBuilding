@@ -37,6 +37,7 @@ class StartGameButtonListener extends MouseInputAdapter {
     }
 
 }
+
 class SelectCityButtonListener extends MouseInputAdapter {
 
     private HomeView homeView;

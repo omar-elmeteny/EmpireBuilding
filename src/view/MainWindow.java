@@ -12,13 +12,13 @@ import units.Cavalry;
 import units.Infantry;
 import units.Status;
 
-public class MainWindow extends JFrame{
+public class MainWindow extends JFrame {
 
     private HomeView homeView;
     private GameView gameView;
     private Game game;
 
-    public MainWindow() throws IOException{
+    public MainWindow() throws IOException {
         super();
         this.setTitle("Empire Building");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,11 +29,11 @@ public class MainWindow extends JFrame{
     }
 
     public void startGame() throws IOException {
-        if(homeView.getSelectedCity() == null){
+        if (homeView.getSelectedCity() == null) {
             JOptionPane.showMessageDialog(this, "Please select a city.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if(homeView.getPlayerName().length() == 0){
+        if (homeView.getPlayerName().length() == 0) {
             JOptionPane.showMessageDialog(this, "Please enter your name.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }

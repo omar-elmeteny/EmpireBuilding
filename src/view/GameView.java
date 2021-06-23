@@ -6,13 +6,13 @@ import java.io.IOException;
 
 import engine.Game;
 
-public class GameView extends JPanel{
-    
+public class GameView extends JPanel {
+
     private SummaryView summaryView;
     private MapView mapView;
     // private SideView sideView;
 
-    public GameView(Game game) throws IOException{
+    public GameView(Game game) throws IOException {
         super();
         setLayout(new BorderLayout());
         summaryView = new SummaryView(game);

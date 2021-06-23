@@ -47,13 +47,13 @@ final class ButtonContainerKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)  {
+        if (obj == null) {
             return false;
         }
         if (obj.getClass() != ButtonContainerKey.class) {
-            return false;            
+            return false;
         }
-        ButtonContainerKey other = (ButtonContainerKey)obj;
+        ButtonContainerKey other = (ButtonContainerKey) obj;
         if (other.from.equals(from) && other.to.equals(to)) {
             return other.distance == distance;
         }
@@ -77,7 +77,6 @@ class ArmyButton extends JButton {
     private static BufferedImage cavalryImage;
     private static BufferedImage infantryImage;
 
-    
     public ArmyButton(Army army, MapView mapView) {
         super();
         this.mapView = mapView;
@@ -96,7 +95,7 @@ class ArmyButton extends JButton {
             if (infantryImage == null) {
                 infantryImage = ImageIO.read(new File("infantry.png"));
             }
-        } catch(IOException ex) {
+        } catch (IOException ex) {
 
         }
     }
@@ -145,7 +144,7 @@ class ArmyButton extends JButton {
     }
 
     private boolean getArmyHasUnitOfType(Class<?> cls) {
-        for (Unit u: army.getUnits()) {
+        for (Unit u : army.getUnits()) {
             if (cls == u.getClass()) {
                 return true;
             }
@@ -156,7 +155,7 @@ class ArmyButton extends JButton {
     public void updateArmyButton() {
         Dimension mapDimensions = mapView.getMapDimensions();
         Dimension imageDimension = mapView.getImageDimensions();
-        int size = ButtonDefaultSize * mapDimensions.width /  imageDimension.width;
+        int size = ButtonDefaultSize * mapDimensions.width / imageDimension.width;
         this.setPreferredSize(new Dimension(getUnitTypeCount() * size, size));
     }
 }
@@ -184,7 +183,7 @@ class ArmyButtonContainerContainerListener extends ContainerAdapter {
     public void componentAdded(ContainerEvent e) {
         container.updateBounds();
     }
-    
+
 }
 
 class ArmyButtonContainer extends JPanel {
@@ -202,16 +201,16 @@ class ArmyButtonContainer extends JPanel {
     public int getIconCount() {
         int c = 0;
         for (int i = 0; i < this.getComponentCount(); i++) {
-            ArmyButton button = (ArmyButton)getComponent(i);
+            ArmyButton button = (ArmyButton) getComponent(i);
             c += button.getUnitTypeCount();
         }
         return c;
     }
-    
+
     public void updateBounds() {
         Dimension mapDimensions = mapView.getMapDimensions();
         Dimension imageDimension = mapView.getImageDimensions();
-        int buttonSize = ArmyButton.ButtonDefaultSize * mapDimensions.width /  imageDimension.width;
+        int buttonSize = ArmyButton.ButtonDefaultSize * mapDimensions.width / imageDimension.width;
         int width = this.getIconCount() * buttonSize;
         int height = buttonSize;
         int x;
@@ -229,8 +228,7 @@ class ArmyButtonContainer extends JPanel {
             } else if (fromCity.equals("Sparta")) {
                 x = xCity;
                 y = yCity - height;
-            }
-            else {
+            } else {
                 x = xCity;
                 y = yCity - height;
             }
@@ -244,7 +242,6 @@ class ArmyButtonContainer extends JPanel {
         }
         setBounds(x, y, width, height);
     }
-
 
     public ButtonContainerKey getKey() {
         return this.key;
@@ -274,7 +271,6 @@ public class MapView extends JPanel {
     private JButton[] cityButtons;
     private Hashtable<Army, ArmyButton> armyButtons;
     private Hashtable<ButtonContainerKey, ArmyButtonContainer> armyButtonContainers;
-    
 
     public MapView(Game game) throws IOException {
         this.game = game;
@@ -291,7 +287,7 @@ public class MapView extends JPanel {
             this.add(cityButtons[i]);
             updateCityButton(cityButtons[i]);
         }
-        
+
         this.addComponentListener(new MapComponentListener(this));
         armyButtons = new Hashtable<>();
         armyButtonContainers = new Hashtable<>();
@@ -312,17 +308,18 @@ public class MapView extends JPanel {
 
     public void updateArmyButtons() {
         for (Army army : this.game.getPlayer().getControlledArmies()) {
-            
+
             ArmyButton armyButton = armyButtons.get(army);
             if (armyButton == null) {
                 armyButton = new ArmyButton(army, this);
                 armyButtons.put(army, armyButton);
-            } 
+            }
             ButtonContainerKey key;
-            
+
             if (army.getCurrentStatus() == Status.MARCHING) {
                 int totalDistance = getDistanceBetweenCities(army.getStartingCity(), army.getTarget());
-                key = new ButtonContainerKey(army.getStartingCity(), army.getTarget(), army.getDistancetoTarget() * 10 / totalDistance);
+                key = new ButtonContainerKey(army.getStartingCity(), army.getTarget(),
+                        army.getDistancetoTarget() * 10 / totalDistance);
             } else {
                 key = new ButtonContainerKey(army.getCurrentLocation(), army.getCurrentLocation(), 0);
             }
@@ -333,7 +330,7 @@ public class MapView extends JPanel {
                 armyButtonContainers.put(key, container);
                 this.add(container);
             }
-            ArmyButtonContainer oldContainer = (ArmyButtonContainer)armyButton.getParent();
+            ArmyButtonContainer oldContainer = (ArmyButtonContainer) armyButton.getParent();
             if (oldContainer != container) {
                 if (oldContainer != null) {
                     oldContainer.remove(armyButton);
@@ -349,7 +346,7 @@ public class MapView extends JPanel {
             boolean found = this.game.getPlayer().getControlledArmies().contains(army);
             if (!found) {
                 armyButtons.remove(army);
-                ArmyButtonContainer container = (ArmyButtonContainer)armyButton.getParent();
+                ArmyButtonContainer container = (ArmyButtonContainer) armyButton.getParent();
                 if (container != null) {
                     container.remove(armyButton);
                 }
@@ -368,8 +365,7 @@ public class MapView extends JPanel {
     public int getDistanceBetweenCities(String fromCity, String toCity) {
         for (Distance d : this.game.getDistances()) {
             if (d.getFrom().equals(fromCity) && d.getTo().equals(toCity)
-                || d.getFrom().equals(toCity) && d.getTo().equals(fromCity)
-            ) {
+                    || d.getFrom().equals(toCity) && d.getTo().equals(fromCity)) {
                 return d.getDistance();
             }
         }

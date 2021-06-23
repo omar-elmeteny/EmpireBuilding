@@ -7,8 +7,8 @@ import engine.Game;
 
 import java.awt.*;
 
-public class SummaryView extends JPanel{
-    
+public class SummaryView extends JPanel {
+
     private JLabel nameTitleLabel;
     private JLabel nameLabel;
     private JLabel treasuryTitleLabel;
@@ -33,7 +33,7 @@ public class SummaryView extends JPanel{
         Color titleColor = Color.WHITE;
         Font infoFont = new Font(Font.SANS_SERIF, Font.PLAIN, 15);
         Color infoColor = Color.WHITE;
-        
+
         nameTitleLabel = new JLabel("Name:");
         nameTitleLabel.setFont(titleFont);
         nameTitleLabel.setForeground(titleColor);
