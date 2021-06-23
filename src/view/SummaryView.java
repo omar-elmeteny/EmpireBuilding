@@ -29,12 +29,12 @@ public class SummaryView extends JPanel{
 
         setLayout(new FlowLayout());
         setBackground(new Color(108, 117, 125));
-        Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 12);
+        Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 15);
         Color titleColor = Color.WHITE;
-        Font infoFont = new Font(Font.SANS_SERIF, Font.PLAIN, 11);
+        Font infoFont = new Font(Font.SANS_SERIF, Font.PLAIN, 15);
         Color infoColor = Color.WHITE;
         
-        nameTitleLabel = new JLabel("Name: ");
+        nameTitleLabel = new JLabel("Name:");
         nameTitleLabel.setFont(titleFont);
         nameTitleLabel.setForeground(titleColor);
         this.add(nameTitleLabel);
@@ -44,7 +44,7 @@ public class SummaryView extends JPanel{
         nameLabel.setForeground(infoColor);
         this.add(nameLabel);
 
-        treasuryTitleLabel = new JLabel("Treasury: ");
+        treasuryTitleLabel = new JLabel("Treasury:");
         treasuryTitleLabel.setFont(titleFont);
         treasuryTitleLabel.setForeground(titleColor);
         this.add(treasuryTitleLabel);
@@ -54,7 +54,7 @@ public class SummaryView extends JPanel{
         treasuryLabel.setForeground(infoColor);
         this.add(treasuryLabel);
 
-        foodTitleLabel = new JLabel("Food: ");
+        foodTitleLabel = new JLabel("Food:");
         foodTitleLabel.setFont(titleFont);
         foodTitleLabel.setForeground(titleColor);
         this.add(foodTitleLabel);
@@ -64,7 +64,7 @@ public class SummaryView extends JPanel{
         foodLabel.setForeground(infoColor);
         this.add(foodLabel);
 
-        citiesTitleLabel = new JLabel("Controlled cities: ");
+        citiesTitleLabel = new JLabel("Controlled cities:");
         citiesTitleLabel.setFont(titleFont);
         citiesTitleLabel.setForeground(titleColor);
         this.add(citiesTitleLabel);
@@ -74,7 +74,7 @@ public class SummaryView extends JPanel{
         citiesLabel.setForeground(infoColor);
         this.add(citiesLabel);
 
-        armiesTitleLabel = new JLabel("Controlled armies: ");
+        armiesTitleLabel = new JLabel("Controlled armies:");
         armiesTitleLabel.setFont(titleFont);
         armiesTitleLabel.setForeground(titleColor);
         this.add(armiesTitleLabel);
@@ -84,7 +84,7 @@ public class SummaryView extends JPanel{
         armiesLabel.setForeground(infoColor);
         this.add(armiesLabel);
 
-        turnsTitleLabel = new JLabel("Turn: ");
+        turnsTitleLabel = new JLabel("Turn:");
         turnsTitleLabel.setFont(titleFont);
         turnsTitleLabel.setForeground(titleColor);
         this.add(turnsTitleLabel);

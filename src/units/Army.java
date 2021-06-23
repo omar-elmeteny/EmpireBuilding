@@ -12,6 +12,7 @@ public class Army{
 	private String target;
 	private String currentLocation;
 	private final int maxToHold=10;
+	private String startingCity;
 
 	public Army(String currentLocation) {
 		this.currentLocation=currentLocation;
@@ -54,6 +55,13 @@ public class Army{
 
 	public void setDistancetoTarget(int distancetoTarget) {
 		this.distancetoTarget = distancetoTarget;
+	}
+
+	public String getStartingCity() {
+		return startingCity;
+	}
+	public void setStartingCity(String startingCity) {
+		this.startingCity = startingCity;
 	}
 	public String getTarget() {
 		return target;
