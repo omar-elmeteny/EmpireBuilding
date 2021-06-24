@@ -7,7 +7,7 @@ import engine.Game;
 
 import java.awt.*;
 
-public class SummaryView extends JPanel {
+public class SummaryView extends JPanel implements GameInformationView {
 
     private JLabel nameTitleLabel;
     private JLabel nameLabel;
@@ -96,7 +96,7 @@ public class SummaryView extends JPanel {
 
     }
 
-    public void updateSummary() {
+    public void updateGameInformation() {
         treasuryLabel.setText(game.getPlayer().getTreasury() + "");
         foodLabel.setText(game.getPlayer().getFood() + "");
         citiesLabel.setText(game.getPlayer().getControlledCities().size() + "");

@@ -283,7 +283,7 @@ class CityButtonListener extends MouseInputAdapter {
 
 }
 
-public class MapView extends JPanel {
+public class MapView extends JPanel implements GameInformationView {
 
     private BufferedImage image;
     private Game game;
@@ -328,6 +328,10 @@ public class MapView extends JPanel {
         for (JButton button : cityButtons) {
             updateCityButton(button);
         }
+    }
+
+    public GameView getGameView() {
+        return gameView;
     }
 
     public void updateArmyButtons() {
@@ -463,6 +467,11 @@ public class MapView extends JPanel {
         }
         Dimension d = new Dimension(mapWidth, mapHeight);
         return d;
+    }
+
+    public void updateGameInformation() {
+        updateCityButtons();
+        updateArmyButtons();
     }
 
 }

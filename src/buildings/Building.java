@@ -55,5 +55,11 @@ public abstract class Building {
 		this.coolDown = inCooldown;
 	}
 	
+	public String getName() {
+		return this.getTypeName();
+	}
 
+	public String getTypeName() {
+		return this.getClass().getSimpleName();
+	}
 }

@@ -31,4 +31,5 @@ public abstract class MilitaryBuilding extends Building {
 		this.currentRecruit = currentRecruit;
 	}
 
+	public abstract Class<?> getUnitType();
 }

@@ -48,5 +48,8 @@ public class Barracks extends MilitaryBuilding {
 		
 	}
 
-
+	@Override
+	public Class<?> getUnitType() {
+		return Infantry.class;
+	}
 }

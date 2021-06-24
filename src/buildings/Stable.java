@@ -44,4 +44,8 @@ public class Stable extends MilitaryBuilding {
 
 	}
 
+	@Override
+	public Class<?> getUnitType() {
+		return Cavalry.class;
+	}
 }
