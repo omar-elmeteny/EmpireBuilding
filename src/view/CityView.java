@@ -151,9 +151,7 @@ abstract class  BuildingPanel extends JPanel implements GameInformationView {
             this.upgradeButton.setVisible(true);
             this.upgradeButton.setText("Upgrade (" + building.getUpgradeCost() + " gold)");
         }
-        this.buttonsContainer.validate();
-        this.buildingInfo.validate();
-        validate();
+       
     }
 
     public String getBuildingName() {
@@ -232,8 +230,7 @@ class MilitaryBuildingPanel extends BuildingPanel {
             this.recruitButton.setText("Recruit " + unitType.getSimpleName() + " (" + building.getRecruitmentCost() + " gold)");
         }
         
-        this.getButtonsContainer().validate();
-        validate();
+        
     }
 }
 
@@ -289,6 +286,7 @@ public class CityView extends JPanel implements GameInformationView {
 
         add(new Box.Filler(null, new Dimension(0, Integer.MAX_VALUE), null));
 
+        this.setPreferredSize( new Dimension(350, Integer.MAX_VALUE));
     }
 
     private void addBuildingPanel(BuildingPanel buildingPanel) {
@@ -312,6 +310,5 @@ public class CityView extends JPanel implements GameInformationView {
         for (BuildingPanel buildingPanel : buildingPanels) {
             buildingPanel.updateGameInformation();
         }
-        validate();
     }
 }
