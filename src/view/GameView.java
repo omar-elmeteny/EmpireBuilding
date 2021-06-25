@@ -5,10 +5,12 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
 
 import buildings.Building;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import engine.City;
@@ -20,6 +22,19 @@ import exceptions.MaxRecruitedException;
 import exceptions.NotEnoughGoldException;
 import units.Army;
 import units.Unit;
+
+class EndTurnButtonListener extends MouseInputAdapter {
+    private GameView gameView;
+
+    public EndTurnButtonListener(GameView gameView) {
+        this.gameView = gameView;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        gameView.endTurn();
+    }
+}
 
 public class GameView extends JPanel implements GameInformationView {
 
@@ -54,6 +69,7 @@ public class GameView extends JPanel implements GameInformationView {
         endTurnButton.setBackground(new Color(20, 108, 76));
         endTurnButton.setForeground(Color.WHITE);
         endTurnButton.setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        endTurnButton.addMouseListener(new EndTurnButtonListener(this));
         bottomContainer.add(endTurnButton, BorderLayout.CENTER);
 
         targetingLabel = new JLabel();
@@ -63,6 +79,11 @@ public class GameView extends JPanel implements GameInformationView {
         targetingLabel.setOpaque(true);
         targetingLabel.setVisible(false);
         bottomContainer.add(targetingLabel, BorderLayout.NORTH);
+    }
+
+    public void endTurn() {
+        game.endTurn();
+        updateGameInformation();
     }
 
     public void startRelocatingUnit(Unit unit) {
@@ -198,7 +219,9 @@ public class GameView extends JPanel implements GameInformationView {
     public void updateGameInformation() {
         this.summaryView.updateGameInformation();
         this.mapView.updateGameInformation();
-        ((GameInformationView) this.sideView).updateGameInformation();
+        if (this.sideView != null) {
+            ((GameInformationView) this.sideView).updateGameInformation();
+        }
     }
 
     private void removeSideView() {
