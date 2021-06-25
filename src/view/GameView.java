@@ -382,6 +382,7 @@ public class GameView extends JPanel implements GameInformationView {
         } else {
             return;
         }
+        updateGameInformation();
         int res = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (res == JOptionPane.YES_OPTION) {
             try {
