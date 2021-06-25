@@ -141,14 +141,17 @@ public class Game {
 	}
 
 	public void targetCity(Army army, String targetName) {
-
+		String startingCity = army.getCurrentLocation();
 		String from = army.getCurrentLocation();
-		if (army.getCurrentLocation().equals("onRoad"))
+		if (from.equals("onRoad")) {
 			from = army.getTarget();
+			startingCity = army.getStartingCity();
+		}
 		for (Distance d : distances) {
 			if ((d.getFrom().equals(from) || d.getFrom().equals(targetName))
 					&& (d.getTo().equals(from) || d.getTo().equals(targetName))) {
 				army.setTarget(targetName);
+				army.setStartingCity(startingCity);
 				int distance = d.getDistance();
 				if (army.getCurrentLocation().equals("onRoad"))
 					distance += army.getDistancetoTarget();
@@ -156,6 +159,21 @@ public class Game {
 			}
 		}
 
+	}
+
+	public City findCityByName(String cityName) {
+		for (City c: availableCities) {
+			if (c.getName().equals(cityName)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	public boolean isDefendingArmy(Army army) {
+		String location = army.getCurrentLocation();
+		City city = findCityByName(location);
+		return city != null && city.getDefendingArmy() == army;
 	}
 
 	public void endTurn() {

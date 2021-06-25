@@ -143,7 +143,7 @@ public class HomeView extends JPanel {
         startGameButton = new JButton();
         startGameButton.setBackground(new Color(20, 108, 76));
         startGameButton.setForeground(Color.WHITE);
-        startGameButton.setFont(new Font(Font.SERIF, Font.PLAIN, 15));
+        startGameButton.setFont(new Font(Font.SERIF, Font.BOLD, 20));
         startGameButton.setText("Start Game");
         startGameButton.addMouseListener(new StartGameButtonListener(mainWindow));
         startButtonContainer.add(startGameButton, BorderLayout.CENTER);

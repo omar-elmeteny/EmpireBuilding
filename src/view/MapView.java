@@ -70,6 +70,22 @@ final class ButtonContainerKey {
     }
 }
 
+class ArmyButtonListener extends MouseInputAdapter {
+    private Army army;
+    private GameView gameView;
+
+    public ArmyButtonListener(Army army, GameView gameView) {
+        this.army = army;
+        this.gameView = gameView;
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        gameView.armyClicked(army);
+    }
+}
+
 class ArmyButton extends JButton {
     public static final int ButtonDefaultSize = 30;
     private final Army army;
@@ -85,6 +101,7 @@ class ArmyButton extends JButton {
         setOpaque(false);
         setContentAreaFilled(false);
         setText(null);
+        addMouseListener(new ArmyButtonListener(army, mapView.getGameView()));
 
         try {
             if (archerImage == null) {
@@ -278,7 +295,7 @@ class CityButtonListener extends MouseInputAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
         String cityName = ((JButton) e.getComponent()).getText();
-        gameView.showCityView(cityName);
+        gameView.cityClicked(cityName);
     }
 
 }
@@ -346,8 +363,12 @@ public class MapView extends JPanel implements GameInformationView {
 
             if (army.getCurrentStatus() == Status.MARCHING) {
                 int totalDistance = getDistanceBetweenCities(army.getStartingCity(), army.getTarget());
+                int distanceToTarget = army.getDistancetoTarget();
+                if (distanceToTarget > totalDistance) {
+                    distanceToTarget = totalDistance;
+                }
                 key = new ButtonContainerKey(army.getStartingCity(), army.getTarget(),
-                        army.getDistancetoTarget() * 10 / totalDistance);
+                         (totalDistance - distanceToTarget) * 10 / totalDistance);
             } else {
                 key = new ButtonContainerKey(army.getCurrentLocation(), army.getCurrentLocation(), 0);
             }

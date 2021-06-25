@@ -20,7 +20,8 @@ import buildings.Market;
 import buildings.MilitaryBuilding;
 import buildings.Stable;
 import engine.City;
-import engine.Player;
+import engine.Game;
+import units.Army;
 
 class BuildButtonListener extends MouseInputAdapter {
     private String type;
@@ -71,7 +72,7 @@ class RecruitButtonListener extends MouseInputAdapter {
 }
 
 
-abstract class  BuildingPanel extends JPanel implements GameInformationView {
+abstract class BuildingPanel extends JPanel implements GameInformationView {
 
     private City city;
     private String type;
@@ -247,12 +248,18 @@ public class CityView extends JPanel implements GameInformationView {
     private JLabel militaryBuildingsLabel;
     private JLabel economicalBuildingsLabel;
     private ArrayList<BuildingPanel> buildingPanels;
-    private Player player;
-    
+    private JLabel defendingArmyLabel;
+    private JLabel stationedArmiesLabel;
+    private JPanel stationedArmiesContainer;
+    private ArmyView defendingArmyView;
+    private Game game;
+    private GameView gameView;
 
-    public CityView(City city, Player player, GameView gameView) {
+
+    public CityView(City city, GameView gameView, Game game) {
         this.city = city;
-        this.player = player;
+        this.gameView = gameView;
+        this.game = game;
         
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setOpaque(false);
@@ -284,6 +291,30 @@ public class CityView extends JPanel implements GameInformationView {
         addBuildingPanel(new EconomicalBuildingPanel(city, Farm.class, gameView));
         addBuildingPanel(new EconomicalBuildingPanel(city, Market.class, gameView));
 
+        defendingArmyLabel = new JLabel("Defending Army");
+        defendingArmyLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        defendingArmyLabel.setAlignmentX(LEFT_ALIGNMENT);
+        add(defendingArmyLabel);
+
+
+        defendingArmyView = new ArmyView(city.getDefendingArmy(), gameView, game);
+        defendingArmyView.setInsideCityView(true);
+        defendingArmyView.setAlignmentX(LEFT_ALIGNMENT);
+        add(defendingArmyView);
+
+        stationedArmiesLabel = new JLabel("Stationed Armies");
+        stationedArmiesLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        stationedArmiesLabel.setAlignmentX(LEFT_ALIGNMENT);
+        add(stationedArmiesLabel);
+
+        stationedArmiesContainer = new JPanel();
+        stationedArmiesContainer.setLayout(new BoxLayout(stationedArmiesContainer, BoxLayout.Y_AXIS));
+        stationedArmiesContainer.setOpaque(false);
+        stationedArmiesContainer.setAlignmentX(LEFT_ALIGNMENT);
+        add(stationedArmiesContainer);
+
+        updateStationedArmies();
+
         add(new Box.Filler(null, new Dimension(0, Integer.MAX_VALUE), null));
 
         this.setPreferredSize( new Dimension(350, Integer.MAX_VALUE));
@@ -302,13 +333,27 @@ public class CityView extends JPanel implements GameInformationView {
         return city;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
+    
     public void updateGameInformation() {
         for (BuildingPanel buildingPanel : buildingPanels) {
             buildingPanel.updateGameInformation();
         }
+        defendingArmyView.updateGameInformation();
+        updateStationedArmies();
+    }
+
+    private void updateStationedArmies() {
+        stationedArmiesContainer.removeAll();
+        for (Army army : game.getPlayer().getControlledArmies()) {
+            if (!army.getCurrentLocation().equals(city.getName()))
+                continue;
+
+            ArmyView armyView = new ArmyView(army, gameView, game);
+            armyView.setInsideCityView(true);
+            stationedArmiesContainer.add(armyView);
+        }
+
+        this.stationedArmiesLabel.setVisible(this.stationedArmiesContainer.getComponentCount() != 0);
+        validate();
     }
 }
