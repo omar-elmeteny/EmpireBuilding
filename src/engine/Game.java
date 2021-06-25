@@ -13,6 +13,7 @@ import exceptions.FriendlyFireException;
 import exceptions.PlayerMustAttackCityException;
 import units.Archer;
 import units.Army;
+import units.AttackResult;
 import units.Cavalry;
 import units.Infantry;
 import units.Status;
@@ -99,6 +100,7 @@ public class Game {
 		BufferedReader br = new BufferedReader(new FileReader(path));
 		String currentLine = br.readLine();
 		Army resultArmy = new Army(cityName);
+		resultArmy.setEnemy(true);
 		while (currentLine != null) {
 			String[] content = currentLine.split(",");
 			String unitType = content[0].toLowerCase();
@@ -177,15 +179,26 @@ public class Game {
 		return city != null && city.getDefendingArmy() == army;
 	}
 
+	public Army getSiegingArmy(City city) {
+		for (Army army : player.getControlledArmies()) {
+			if (army.getCurrentLocation().equals(city.getName()) && army.getCurrentStatus() == Status.BESIEGING) {
+				return army;
+			}
+		}
+		return null;
+	}
+
 	public void endTurn() throws PlayerMustAttackCityException {
 
 		for (City c : availableCities) {
 			if (c.isUnderSiege()) {
 				if (c.getTurnsUnderSiege() >= 3) {
-					c.setUnderSiege(false);
-					throw new PlayerMustAttackCityException(c, "City " + c.getName() + " has been undersiege for "
-						+ c.getTurnsUnderSiege() + " turns. You must either initial a manual attack or auto resolve battle.");
-
+					if (getSiegingArmy(c) != null) {
+						throw new PlayerMustAttackCityException(c, "City " + c.getName() + " has been undersiege for "
+							+ c.getTurnsUnderSiege() + " turns. You must either initial a manual attack or auto resolve battle.");
+					} else {
+						c.setUnderSiege(false);
+					}
 				}	
 			}
 		}
@@ -238,29 +251,35 @@ public class Game {
 
 		for (City c : availableCities) {
 			if (c.isUnderSiege()) {
+				c.setTurnsUnderSiege(c.getTurnsUnderSiege() + 1);
 				for (Unit u : c.getDefendingArmy().getUnits()) {
 					u.setCurrentSoldierCount(u.getCurrentSoldierCount() - (int) (u.getCurrentSoldierCount() * 0.1));
 				}
 			}
 		}
-
 	}
 
-	public void autoResolve(Army attacker, Army defender) throws FriendlyFireException {
-		int turn = 1;
-		while (attacker.getUnits().size() != 0 && defender.getUnits().size() != 0) {
-			Unit unit1 = attacker.getUnits().get((int) (Math.random() * attacker.getUnits().size()));
-			Unit unit2 = defender.getUnits().get((int) (Math.random() * defender.getUnits().size()));
-			if (turn == 1)
-				unit1.attack(unit2);
-			else
-				unit2.attack(unit1);
-			turn = turn == 1 ? 0 : 1;
+	public AttackResult performRandomAttack(Army attacker, Army defender) throws FriendlyFireException {
+		Unit unit1 = attacker.getUnits().get((int) (Math.random() * attacker.getUnits().size()));
+		Unit unit2 = defender.getUnits().get((int) (Math.random() * defender.getUnits().size()));
+		return unit1.attack(unit2);
+	}
 
+	public ArrayList<AttackResult> autoResolve(Army attacker, Army defender) throws FriendlyFireException {
+		int turn = 1;
+		ArrayList<AttackResult> results = new ArrayList<>();
+		while (attacker.getUnits().size() != 0 && defender.getUnits().size() != 0) {
+			AttackResult result;
+			if (turn == 1)
+				result = performRandomAttack(attacker, defender);
+			else
+				result = performRandomAttack(defender, attacker);
+			results.add(result);
+			turn = turn == 1 ? 0 : 1;
 		}
 		if (attacker.getUnits().size() != 0)
 			occupy(attacker, defender.getCurrentLocation());
-
+		return results;
 	}
 
 	public void occupy(Army a, String cityName) {

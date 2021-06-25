@@ -35,9 +35,21 @@ public class MainWindow extends JFrame {
         }
         game = new Game(homeView.getPlayerName(), homeView.getSelectedCity());
         homeView.setVisible(false);
+        this.remove(homeView);
+        this.homeView = null;
 
-        gameView = new GameView(game);
+        gameView = new GameView(game, this);
         this.add(gameView);
+    }
+
+    public void newGame() throws IOException {
+        if (gameView != null) {
+            this.gameView.setVisible(false);
+            remove(gameView);
+            this.gameView = null;
+        }
+        homeView = new HomeView(this);
+        this.add(homeView);
     }
 
 }

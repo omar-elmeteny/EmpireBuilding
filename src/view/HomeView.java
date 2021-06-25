@@ -64,7 +64,7 @@ public class HomeView extends JPanel {
     private JLabel titleLabel;
     private JLabel teamLabel;
     private JLabel messageLabel;
-    private JPanel nameContainer;
+    private LimitedHeightPanel nameContainer;
     private JLabel nameLabel;
     private JTextField nameField;
     private JPanel citiesContainer;
@@ -102,8 +102,8 @@ public class HomeView extends JPanel {
 
         this.add(Box.createRigidArea(new Dimension(0, 5)));
 
-        nameContainer = new JPanel(new BorderLayout());
-        nameContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
+        nameContainer = new LimitedHeightPanel();
+        nameContainer.setLayout(new BorderLayout());
         nameContainer.setOpaque(false);
         this.add(nameContainer);
 
@@ -137,8 +137,8 @@ public class HomeView extends JPanel {
 
         this.add(Box.createRigidArea(new Dimension(0, 5)));
 
-        startButtonContainer = new JPanel(new BorderLayout());
-        startButtonContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
+        startButtonContainer = new LimitedHeightPanel();
+        startButtonContainer.setLayout(new BorderLayout());
         this.add(startButtonContainer);
         startGameButton = new JButton();
         startGameButton.setBackground(new Color(20, 108, 76));

@@ -5,6 +5,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.event.MouseInputAdapter;
 
 import buildings.Building;
@@ -12,15 +13,21 @@ import buildings.Building;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import engine.City;
 import engine.Game;
 import exceptions.BuildingInCoolDownException;
+import exceptions.FriendlyCityException;
+import exceptions.FriendlyFireException;
 import exceptions.MaxCapacityException;
 import exceptions.MaxLevelException;
 import exceptions.MaxRecruitedException;
 import exceptions.NotEnoughGoldException;
+import exceptions.PlayerMustAttackCityException;
+import exceptions.TargetNotReachedException;
 import units.Army;
+import units.AttackResult;
 import units.Unit;
 
 class EndTurnButtonListener extends MouseInputAdapter {
@@ -44,14 +51,19 @@ public class GameView extends JPanel implements GameInformationView {
     private Game game;
     private JButton endTurnButton;
     private JLabel targetingLabel;
+    private LimitedHeightPanel sideViewContainer;
+    private JScrollPane sideViewScrollPane;
     private JPanel bottomContainer;
     private Army targetingCity;
     private Unit relocatingUnit;
+    private MainWindow mainWindow;
 
-    public GameView(Game game) throws IOException {
+    public GameView(Game game, MainWindow mainWindow) throws IOException {
         super();
 
         this.game = game;
+        this.mainWindow = mainWindow;
+
         setLayout(new BorderLayout());
         this.setBackground(new Color(255, 228, 196));
         summaryView = new SummaryView(game);
@@ -79,11 +91,81 @@ public class GameView extends JPanel implements GameInformationView {
         targetingLabel.setOpaque(true);
         targetingLabel.setVisible(false);
         bottomContainer.add(targetingLabel, BorderLayout.NORTH);
+
+        sideViewContainer = new LimitedHeightPanel();
+        sideViewContainer.setOpaque(false);
+        sideViewContainer.setLayout(new BorderLayout());
+
+        sideViewScrollPane = new JScrollPane(sideViewContainer);
+        sideViewScrollPane.setOpaque(false);
+        sideViewScrollPane.getViewport().setOpaque(false);
+        sideViewScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        sideViewScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        add(sideViewScrollPane, BorderLayout.EAST);
+        
     }
 
     public void endTurn() {
-        game.endTurn();
-        updateGameInformation();
+        try {
+            game.endTurn();
+            updateGameInformation();
+            checkForVictoryOrDefeat();
+        } catch (PlayerMustAttackCityException ex) {
+            selecteSiegeEndOption(ex.getMessage(), ex.getCity());
+        }
+    }
+
+    private void selecteSiegeEndOption(String message, City city) {
+        Object[] options = new Object[] { "Manually Attack City", "Auto Resolve." };
+        String title = city.getName() + " siege ended";
+        int choice = JOptionPane.showOptionDialog(this, message, title, JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        Army attacker = game.getSiegingArmy(city);
+        if (choice == 0) {
+            attackCity(attacker);
+        } else {
+            Army defender = city.getDefendingArmy();            
+            try {
+                game.autoResolve(attacker, defender);
+                if (attacker.getUnits().size() == 0) {
+                    JOptionPane.showMessageDialog(this, "Your army lost to " + city.getName() + "'s army.", "Auto resolve complete", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Your won the battle and occupied " + city.getName() + ".", "Auto resolve complete", JOptionPane.INFORMATION_MESSAGE);
+                    checkForVictoryOrDefeat();
+                }
+            } catch (FriendlyFireException ex) {
+                ex.printStackTrace();
+            }
+            updateGameInformation();
+        }
+    }
+
+    public void laySiegeToCity(Army army) {
+        City city = game.findCityByName(army.getCurrentLocation());
+        try {
+            game.getPlayer().laySiege(army, city);
+            updateGameInformation();
+        } catch (TargetNotReachedException | FriendlyCityException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Command failed", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    public void attackCity(Army army) {
+        if (isSideViewBattleView()) {
+            return;
+        }
+        if (army.getCurrentLocation().equals("onRoad")) {
+            JOptionPane.showMessageDialog(this, "Target not reached.", "Command failed", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        City city = game.findCityByName(army.getCurrentLocation());
+        if (game.getPlayer().getControlledCities().contains(city)) {
+            JOptionPane.showMessageDialog(this, "You can't attack a friendly city.", "Command failed", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        removeSideView();
+        sideView = new BattleView(this, army, city.getDefendingArmy());
+        sideViewContainer.add(sideView, BorderLayout.CENTER);
+        validate();
     }
 
     public void startRelocatingUnit(Unit unit) {
@@ -104,6 +186,7 @@ public class GameView extends JPanel implements GameInformationView {
     private void endRelocatingUnit(Army army) {
         Army originalArmy = relocatingUnit.getParentArmy();
         if (originalArmy == army) {
+            resetTargeting();
             return;
         } 
         try {
@@ -119,18 +202,19 @@ public class GameView extends JPanel implements GameInformationView {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Command failed", JOptionPane.WARNING_MESSAGE);
             
         }
-        relocatingUnit = null;
-        targetingCity = null;
-        targetingLabel.setVisible(false);
+        resetTargeting();
     }
 
     private void showArmyView(Army army) {
+        if (isSideViewBattleView()) {
+            return;
+        }
         if (isSideViewArmyView(army)) {
             return;
         }
         removeSideView();
         sideView = new ArmyView(army, this, game);
-        add(sideView, BorderLayout.EAST);
+        sideViewContainer.add(sideView, BorderLayout.CENTER);
         validate();
     }
 
@@ -169,21 +253,21 @@ public class GameView extends JPanel implements GameInformationView {
 
     private void endTargetCity(String cityName) {
         game.targetCity(targetingCity, cityName);
-        targetingLabel.setVisible(false);
-        targetingCity = null;
-        relocatingUnit = null;
+        resetTargeting();
         updateGameInformation();
     }
 
     private void showCityView(String cityName) {
-        
+        if (isSideViewBattleView()) {
+            return;
+        }
         for (City city : game.getPlayer().getControlledCities()) {
             if (isSideViewCityView(city)) {
                     return;
             }
             removeSideView();
             sideView = new CityView(city, this, game);
-            add(sideView, BorderLayout.EAST);
+            sideViewContainer.add(sideView, BorderLayout.CENTER);
             validate();
         }
     }
@@ -200,9 +284,9 @@ public class GameView extends JPanel implements GameInformationView {
 
     public void upgradeBuilding(Building building) {
         try {
-            building.upgrade();
+            game.getPlayer().upgradeBuilding(building);
             updateGameInformation();
-        } catch (BuildingInCoolDownException | MaxLevelException ex) {
+        } catch (BuildingInCoolDownException | MaxLevelException | NotEnoughGoldException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Command failed", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -221,12 +305,21 @@ public class GameView extends JPanel implements GameInformationView {
         this.mapView.updateGameInformation();
         if (this.sideView != null) {
             ((GameInformationView) this.sideView).updateGameInformation();
+            
         }
+    }
+
+    private void resetTargeting() {
+        targetingLabel.setVisible(false);
+        targetingCity = null;
+        relocatingUnit = null;
     }
 
     private void removeSideView() {
         if (sideView != null) {
-            remove(sideView);
+            sideViewContainer.remove(sideView);
+            sideView = null;
+            validate();
         }
     }
 
@@ -240,5 +333,64 @@ public class GameView extends JPanel implements GameInformationView {
         return sideView != null
             && sideView.getClass() == ArmyView.class
             && ((ArmyView)sideView).getArmy() == army;
+    }
+    
+    private boolean isSideViewBattleView() {
+        return sideView != null && sideView.getClass() == BattleView.class;
+    }
+
+	public ArrayList<AttackResult> attackUnit(Unit attackingUnit, Unit target) {
+        Army attackingArmy = attackingUnit.getParentArmy();
+        Army targetArmy = target.getParentArmy();
+            
+        ArrayList<AttackResult> results = new ArrayList<>();
+		try {
+            AttackResult result = attackingUnit.attack(target);
+            results.add(result);
+            if (targetArmy.getUnits().size() != 0) {
+                result = game.performRandomAttack(targetArmy, attackingUnit.getParentArmy());
+                results.add(result);
+                if (attackingArmy.getUnits().size() == 0) {
+                    game.getPlayer().getControlledArmies().remove(attackingArmy);
+                }
+            } else {
+                game.occupy(attackingArmy, attackingArmy.getCurrentLocation());
+                checkForVictoryOrDefeat();
+            }
+            
+            updateGameInformation();
+        } catch (FriendlyFireException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Command failed", JOptionPane.WARNING_MESSAGE);
+        }
+        return results;
+	}
+
+    public void closeBattleView() {
+        this.removeSideView();
+    }
+
+    private void checkForVictoryOrDefeat() {
+        String message;
+        String title;
+        if (game.getCurrentTurnCount() == game.getMaxTurnCount()) {
+            message = "Sorry you lost the game! Better luck next time. Do you want to start another game?";
+            title = "Defeat";
+            
+        } else if (game.getPlayer().getControlledCities().size() == game.getAvailableCities().size()) {
+            message = "Congratulations! You have won the game. Do you want to start another game?";
+            title = "Victory";
+        } else {
+            return;
+        }
+        int res = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (res == JOptionPane.YES_OPTION) {
+            try {
+                mainWindow.newGame();
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } 
+        System.exit(0);
     }
 }

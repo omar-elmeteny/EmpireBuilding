@@ -72,18 +72,18 @@ class RecruitButtonListener extends MouseInputAdapter {
 }
 
 
-abstract class BuildingPanel extends JPanel implements GameInformationView {
+abstract class BuildingPanel extends LimitedHeightPanel implements GameInformationView {
 
     private City city;
     private String type;
     private Class<?> buildingClass;
 
-    private JPanel buildingInfo;
+    private LimitedHeightPanel buildingInfo;
     private JLabel buildingNameLabel;
     private JLabel buildingLevelLabel;
     private JLabel buildingCooldownLabel;
 
-    private JPanel buttonsContainer;
+    private LimitedHeightPanel buttonsContainer;
     private JButton upgradeButton;
     private JButton buildButton;
 
@@ -96,7 +96,7 @@ abstract class BuildingPanel extends JPanel implements GameInformationView {
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        this.buildingInfo = new JPanel();
+        this.buildingInfo = new LimitedHeightPanel();
         this.buildingInfo.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 4));
         this.buildingInfo.setOpaque(false);
         this.buildingInfo.setAlignmentX(LEFT_ALIGNMENT);
@@ -115,7 +115,7 @@ abstract class BuildingPanel extends JPanel implements GameInformationView {
         this.buildingCooldownLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
         buildingInfo.add(this.buildingCooldownLabel);
 
-        this.buttonsContainer = new JPanel();
+        this.buttonsContainer = new LimitedHeightPanel();
         this.buttonsContainer.setOpaque(false);
         this.buttonsContainer.setAlignmentX(LEFT_ALIGNMENT);
         this.buttonsContainer.setLayout(new BoxLayout(this.buttonsContainer, BoxLayout.Y_AXIS));
@@ -152,7 +152,6 @@ abstract class BuildingPanel extends JPanel implements GameInformationView {
             this.upgradeButton.setVisible(true);
             this.upgradeButton.setText("Upgrade (" + building.getUpgradeCost() + " gold)");
         }
-       
     }
 
     public String getBuildingName() {
@@ -241,7 +240,7 @@ class EconomicalBuildingPanel extends BuildingPanel {
     }
 }
 
-public class CityView extends JPanel implements GameInformationView {
+public class CityView extends LimitedHeightPanel implements GameInformationView {
     
     final private City city;
     private JLabel cityNameLabel;
@@ -250,7 +249,7 @@ public class CityView extends JPanel implements GameInformationView {
     private ArrayList<BuildingPanel> buildingPanels;
     private JLabel defendingArmyLabel;
     private JLabel stationedArmiesLabel;
-    private JPanel stationedArmiesContainer;
+    private LimitedHeightPanel stationedArmiesContainer;
     private ArmyView defendingArmyView;
     private Game game;
     private GameView gameView;
@@ -307,22 +306,18 @@ public class CityView extends JPanel implements GameInformationView {
         stationedArmiesLabel.setAlignmentX(LEFT_ALIGNMENT);
         add(stationedArmiesLabel);
 
-        stationedArmiesContainer = new JPanel();
+        stationedArmiesContainer = new LimitedHeightPanel();
         stationedArmiesContainer.setLayout(new BoxLayout(stationedArmiesContainer, BoxLayout.Y_AXIS));
         stationedArmiesContainer.setOpaque(false);
         stationedArmiesContainer.setAlignmentX(LEFT_ALIGNMENT);
+        
         add(stationedArmiesContainer);
 
         updateStationedArmies();
-
-        add(new Box.Filler(null, new Dimension(0, Integer.MAX_VALUE), null));
-
-        this.setPreferredSize( new Dimension(350, Integer.MAX_VALUE));
     }
 
     private void addBuildingPanel(BuildingPanel buildingPanel) {
         buildingPanel.setAlignmentX(LEFT_ALIGNMENT);
-        buildingPanel.setPreferredSize(buildingPanel.getPreferredSize());
         add(buildingPanel);
         buildingPanels.add(buildingPanel);
         buildingPanel.updateGameInformation();
@@ -352,8 +347,7 @@ public class CityView extends JPanel implements GameInformationView {
             armyView.setInsideCityView(true);
             stationedArmiesContainer.add(armyView);
         }
-
         this.stationedArmiesLabel.setVisible(this.stationedArmiesContainer.getComponentCount() != 0);
-        validate();
+        stationedArmiesContainer.setVisible(this.stationedArmiesContainer.getComponentCount() != 0);
     }
 }

@@ -277,8 +277,7 @@ class MapComponentListener extends ComponentAdapter {
 
     @Override
     public void componentResized(ComponentEvent e) {
-        mapView.updateCityButtons();
-        mapView.updateArmyButtons();
+        mapView.updateGameInformation();
     }
 }
 
@@ -493,6 +492,7 @@ public class MapView extends JPanel implements GameInformationView {
     public void updateGameInformation() {
         updateCityButtons();
         updateArmyButtons();
+        repaint();
     }
 
 }

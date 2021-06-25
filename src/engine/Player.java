@@ -121,6 +121,9 @@ public class Player {
 	}
 
 	public void laySiege(Army army, City city) throws TargetNotReachedException, FriendlyCityException {
+		if (army.getCurrentLocation().equals("onRoad")) {
+			throw new TargetNotReachedException("Target not reached");
+		}
 		if (controlledCities.contains(city))
 			throw new FriendlyCityException("You can't attack a friendly city");
 		if (!army.getCurrentLocation().equals(city.getName()))

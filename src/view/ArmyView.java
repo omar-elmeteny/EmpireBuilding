@@ -4,11 +4,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputAdapter;
@@ -16,6 +14,36 @@ import javax.swing.event.MouseInputAdapter;
 import engine.Game;
 import units.Army;
 import units.Unit;
+
+class LaySiegeToCityButtonListener extends MouseInputAdapter {
+    private Army army;
+    private GameView gameView;
+
+    LaySiegeToCityButtonListener(Army army, GameView gameView) {
+        this.army = army;
+        this.gameView = gameView;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        gameView.laySiegeToCity(army);
+    }
+}
+
+class AttackCityButtonListener extends MouseInputAdapter {
+    private Army army;
+    private GameView gameView;
+
+    AttackCityButtonListener(Army army, GameView gameView) {
+        this.army = army;
+        this.gameView = gameView;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        gameView.attackCity(army);
+    }
+}
 
 class TargetCityButtonListener extends MouseInputAdapter {
 
@@ -64,28 +92,31 @@ class RelocateArmyButtonListener extends MouseInputAdapter {
     }
 }
 
-public class ArmyView extends JPanel implements GameInformationView {
+public class ArmyView extends LimitedHeightPanel implements GameInformationView {
 
     private Army army;
-    private JPanel statusContainer;
+    private LimitedHeightPanel statusContainer;
     private JLabel statusTitleLabel;
     private JLabel statusLabel;
-    private JPanel targetContainer;
+    private LimitedHeightPanel targetContainer;
     private JLabel targetTitleLabel;
     private JLabel targetLabel;
-    private JPanel distanceToTargetContainer;
+    private LimitedHeightPanel distanceToTargetContainer;
     private JLabel distanceToTargetTitleLabel;
     private JLabel distanceToTargetLabel;
-    private JPanel locationContainer;
+    private LimitedHeightPanel locationContainer;
     private JLabel locationTitleLabel;
     private JLabel locationLabel;
-    private JPanel armyUnitsContainer;
-    private JPanel buttonContainer;
+    private LimitedHeightPanel armyUnitsContainer;
+    private LimitedHeightPanel buttonContainer;
     private JButton targetCityButton;
+    private MaxWidthLabel unitsLabel;
     private GameView gameView;
     private GridBagLayout armyGrid;
     private Game game;
     private boolean insideCityView;
+    private JButton attackCityButton;
+    private JButton laySiegeToCityButton;
 
     public ArmyView(Army army, GameView gameView, Game game) {
         this.army = army;
@@ -95,7 +126,7 @@ public class ArmyView extends JPanel implements GameInformationView {
         this.setOpaque(false);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        statusContainer = new JPanel();
+        statusContainer = new LimitedHeightPanel();
         statusContainer.setAlignmentX(LEFT_ALIGNMENT);
         statusContainer.setOpaque(false);
         statusContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -109,7 +140,7 @@ public class ArmyView extends JPanel implements GameInformationView {
         statusLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
         statusContainer.add(statusLabel);
 
-        targetContainer = new JPanel();
+        targetContainer = new LimitedHeightPanel();
         targetContainer.setAlignmentX(LEFT_ALIGNMENT);
         targetContainer.setOpaque(false);
         targetContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -123,7 +154,7 @@ public class ArmyView extends JPanel implements GameInformationView {
         targetLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
         targetContainer.add(targetLabel);
 
-        distanceToTargetContainer = new JPanel();
+        distanceToTargetContainer = new LimitedHeightPanel();
         distanceToTargetContainer.setAlignmentX(LEFT_ALIGNMENT);
         distanceToTargetContainer.setOpaque(false);
         distanceToTargetContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -137,7 +168,7 @@ public class ArmyView extends JPanel implements GameInformationView {
         distanceToTargetLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
         distanceToTargetContainer.add(distanceToTargetLabel);
 
-        locationContainer = new JPanel();
+        locationContainer = new LimitedHeightPanel();
         locationContainer.setAlignmentX(LEFT_ALIGNMENT);
         locationContainer.setOpaque(false);
         locationContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -152,7 +183,12 @@ public class ArmyView extends JPanel implements GameInformationView {
         locationContainer.add(locationLabel);
 
         if (!game.isDefendingArmy(army)) {
-            buttonContainer = new JPanel();
+            GridLayout grid = new GridLayout();
+            grid.setColumns(1);
+            grid.setRows(3);
+            
+            buttonContainer = new LimitedHeightPanel();
+            buttonContainer.setLayout(grid);
             buttonContainer.setOpaque(false);
             buttonContainer.setBorder(new EmptyBorder(5, 5, 5, 5));
             buttonContainer.setAlignmentX(LEFT_ALIGNMENT);
@@ -163,20 +199,33 @@ public class ArmyView extends JPanel implements GameInformationView {
             targetCityButton.setBackground(new Color(13, 202, 240));
             targetCityButton.addMouseListener(new TargetCityButtonListener(army, gameView));
             buttonContainer.add(targetCityButton);
+
+            attackCityButton = new JButton();
+            attackCityButton.setText("Attack City");
+            attackCityButton.setBackground(new Color(13, 202, 240));
+            attackCityButton.addMouseListener(new AttackCityButtonListener(army, gameView));
+            buttonContainer.add(attackCityButton);
+
+            laySiegeToCityButton = new JButton();
+            laySiegeToCityButton.setText("Lay Siege to City");
+            laySiegeToCityButton.setBackground(new Color(13, 202, 240));
+            laySiegeToCityButton.addMouseListener(new LaySiegeToCityButtonListener(army, gameView));
+            buttonContainer.add(laySiegeToCityButton);
         }
 
+        unitsLabel = new MaxWidthLabel();
+        unitsLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
+        this.add(unitsLabel);
+
         armyGrid = new GridBagLayout();
-        armyUnitsContainer = new JPanel();
+        armyUnitsContainer = new LimitedHeightPanel();
         armyUnitsContainer.setLayout(armyGrid);
         armyUnitsContainer.setOpaque(false);
         armyUnitsContainer.setAlignmentX(LEFT_ALIGNMENT);
         armyUnitsContainer.setBorder(new EmptyBorder(5, 5, 5, 5));
         this.add(armyUnitsContainer);
-
-        add(new Box.Filler(null, new Dimension(0, Integer.MAX_VALUE), null));
-        this.setPreferredSize(new Dimension(350, Integer.MAX_VALUE));
-
         updateGameInformation();
+
     }
 
     public boolean isInsideCityView() {
@@ -188,10 +237,8 @@ public class ArmyView extends JPanel implements GameInformationView {
         this.statusContainer.setVisible(!insideCityView);
         this.locationContainer.setVisible(!insideCityView);
         if (insideCityView) {
-            this.setPreferredSize(new Dimension(350, 0));
             this.setBorder(BorderFactory.createEtchedBorder());
         } else {
-            this.setPreferredSize(new Dimension(350, Integer.MAX_VALUE));
             this.setBorder(BorderFactory.createEmptyBorder());
         }
     }
@@ -211,11 +258,18 @@ public class ArmyView extends JPanel implements GameInformationView {
             this.targetContainer.setVisible(true);
             this.distanceToTargetContainer.setVisible(true);
             this.targetLabel.setText(army.getTarget());
-            ;
             this.distanceToTargetLabel.setText(army.getDistancetoTarget() + "");
         }
 
+        unitsLabel.setText(army.getUnits().size() == 0 ? "No units" : "Units");
+        unitsLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, unitsLabel.getPreferredSize().height));
         armyUnitsContainer.removeAll();
+        if (army.getUnits().size() == 0) {
+            armyUnitsContainer.setVisible(false);
+            return;
+        } else {
+            armyUnitsContainer.setVisible(true);
+        }
         AddUnitsLabel("Type", true, 0, 0, 3);
         AddUnitsLabel("Lvl", true, 1, 0, 1);
         AddUnitsLabel("Cnt/Max", true, 2, 0, 1);
@@ -235,7 +289,6 @@ public class ArmyView extends JPanel implements GameInformationView {
             AddUnitsButton("Relocate", 4, y, 4, new RelocateArmyButtonListener(unit, gameView));
             y++;
         }
-        setSize(getPreferredSize());
     }
 
     private void AddUnitsLabel(String text, boolean bold, int gridx, int gridy, double weightx) {
