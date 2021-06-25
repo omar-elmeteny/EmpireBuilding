@@ -10,6 +10,7 @@ import buildings.Farm;
 import buildings.Market;
 import buildings.MilitaryBuilding;
 import exceptions.FriendlyFireException;
+import exceptions.PlayerMustAttackCityException;
 import units.Archer;
 import units.Army;
 import units.Cavalry;
@@ -162,7 +163,7 @@ public class Game {
 	}
 
 	public City findCityByName(String cityName) {
-		for (City c: availableCities) {
+		for (City c : availableCities) {
 			if (c.getName().equals(cityName)) {
 				return c;
 			}
@@ -176,7 +177,19 @@ public class Game {
 		return city != null && city.getDefendingArmy() == army;
 	}
 
-	public void endTurn() {
+	public void endTurn() throws PlayerMustAttackCityException {
+
+		for (City c : availableCities) {
+			if (c.isUnderSiege()) {
+				if (c.getTurnsUnderSiege() >= 3) {
+					c.setUnderSiege(false);
+					throw new PlayerMustAttackCityException(c, "City " + c.getName() + " has been undersiege for "
+						+ c.getTurnsUnderSiege() + " turns. You must either initial a manual attack or auto resolve battle.");
+
+				}	
+			}
+		}
+
 		currentTurnCount++;
 		double totalUpkeep = 0;
 		for (City c : player.getControlledCities()) {
@@ -194,22 +207,22 @@ public class Game {
 				else if (b instanceof Farm)
 					player.setFood(player.getFood() + b.harvest());
 			}
-			totalUpkeep+=c.getDefendingArmy().foodNeeded();
+			totalUpkeep += c.getDefendingArmy().foodNeeded();
 		}
 		for (Army a : player.getControlledArmies()) {
-			if (!a.getTarget() .equals("") && a.getCurrentStatus() == Status.IDLE) {
+			if (!a.getTarget().equals("") && a.getCurrentStatus() == Status.IDLE) {
 				a.setCurrentStatus(Status.MARCHING);
 				a.setCurrentLocation("onRoad");
 			}
-			if(a.getDistancetoTarget()>0 &&!a.getTarget().equals(""))
-			a.setDistancetoTarget(a.getDistancetoTarget() - 1);
+			if (a.getDistancetoTarget() > 0 && !a.getTarget().equals(""))
+				a.setDistancetoTarget(a.getDistancetoTarget() - 1);
 			if (a.getDistancetoTarget() == 0) {
 				a.setCurrentLocation(a.getTarget());
 				a.setTarget("");
 				a.setCurrentStatus(Status.IDLE);
+				a.setDistancetoTarget(-1);
 			}
-			totalUpkeep +=  a.foodNeeded();
-
+			totalUpkeep += a.foodNeeded();
 		}
 		if (totalUpkeep <= player.getFood())
 			player.setFood(player.getFood() - totalUpkeep);
@@ -225,15 +238,6 @@ public class Game {
 
 		for (City c : availableCities) {
 			if (c.isUnderSiege()) {
-				if(c.getTurnsUnderSiege() < 3){
-				c.setTurnsUnderSiege(c.getTurnsUnderSiege() + 1);
-				
-				}
-				else{
-					// player should choose to attack
-					c.setUnderSiege(false);
-					return;
-				}
 				for (Unit u : c.getDefendingArmy().getUnits()) {
 					u.setCurrentSoldierCount(u.getCurrentSoldierCount() - (int) (u.getCurrentSoldierCount() * 0.1));
 				}
