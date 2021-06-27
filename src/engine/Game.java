@@ -196,7 +196,7 @@ public class Game {
 					if (getSiegingArmy(c) != null) {
 						throw new PlayerMustAttackCityException(c,
 								"City " + c.getName() + " has been undersiege for " + c.getTurnsUnderSiege()
-										+ " turns. You must either initial a manual attack or auto resolve battle.");
+										+ " turns. You must either initiate a manual attack or auto resolve battle.");
 					} else {
 						c.setUnderSiege(false);
 					}

@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "**/.classpath": false,
+        "**/.project": false
+    }
+}
