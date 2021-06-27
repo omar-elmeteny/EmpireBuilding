@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import javax.swing.JLabel;
 
 public class MaxWidthLabel extends JLabel {
-    
+
     @Override
     public Dimension getMaximumSize() {
         Dimension d = getPreferredSize();

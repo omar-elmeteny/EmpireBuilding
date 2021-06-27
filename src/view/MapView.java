@@ -283,7 +283,6 @@ class MapComponentListener extends ComponentAdapter {
 
 class CityButtonListener extends MouseInputAdapter {
 
-
     private GameView gameView;
 
     public CityButtonListener(GameView gameView) {
@@ -307,7 +306,6 @@ public class MapView extends JPanel implements GameInformationView {
     private Hashtable<Army, ArmyButton> armyButtons;
     private Hashtable<ButtonContainerKey, ArmyButtonContainer> armyButtonContainers;
     private GameView gameView;
-   
 
     public MapView(Game game, GameView gameView) throws IOException {
         this.game = game;
@@ -367,7 +365,7 @@ public class MapView extends JPanel implements GameInformationView {
                     distanceToTarget = totalDistance;
                 }
                 key = new ButtonContainerKey(army.getStartingCity(), army.getTarget(),
-                         (totalDistance - distanceToTarget) * 10 / totalDistance);
+                        (totalDistance - distanceToTarget) * 10 / totalDistance);
             } else {
                 key = new ButtonContainerKey(army.getCurrentLocation(), army.getCurrentLocation(), 0);
             }

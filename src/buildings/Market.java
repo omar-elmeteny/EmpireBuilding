@@ -11,9 +11,9 @@ public class Market extends EconomicBuilding {
 
 	@Override
 	public int harvest() {
-		if(getLevel()==1)
+		if (getLevel() == 1)
 			return 1000;
-		else if(getLevel()==2)
+		else if (getLevel() == 2)
 			return 1500;
 		else
 			return 2000;
@@ -22,14 +22,12 @@ public class Market extends EconomicBuilding {
 	@Override
 	public void upgrade() throws BuildingInCoolDownException, MaxLevelException {
 		super.upgrade();
-		if(getLevel()==1)
-		{
+		if (getLevel() == 1) {
 			setLevel(2);
 			setUpgradeCost(1000);
-		}
-		else if(getLevel()==2)
-		setLevel(3);
-		
+		} else if (getLevel() == 2)
+			setLevel(3);
+
 	}
 
 }

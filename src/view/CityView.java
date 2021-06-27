@@ -66,11 +66,10 @@ class RecruitButtonListener extends MouseInputAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        MilitaryBuilding building = (MilitaryBuilding)buildingPanel.getBuilding();
+        MilitaryBuilding building = (MilitaryBuilding) buildingPanel.getBuilding();
         gameView.recruitUnit(building.getUnitType().getSimpleName(), buildingPanel.getCity());
     }
 }
-
 
 abstract class BuildingPanel extends LimitedHeightPanel implements GameInformationView {
 
@@ -135,7 +134,7 @@ abstract class BuildingPanel extends LimitedHeightPanel implements GameInformati
     }
 
     public void updateGameInformation() {
-        
+
         Building building = this.getBuilding();
         if (building == null) {
             this.buildButton.setVisible(true);
@@ -156,19 +155,19 @@ abstract class BuildingPanel extends LimitedHeightPanel implements GameInformati
 
     public String getBuildingName() {
         try {
-            Building b = (Building)this.buildingClass.getConstructor().newInstance();
+            Building b = (Building) this.buildingClass.getConstructor().newInstance();
             return b.getName();
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             return this.type;
         }
     }
 
     public int getBuildingCost() {
         try {
-            Building b = (Building)this.buildingClass.getConstructor().newInstance();
+            Building b = (Building) this.buildingClass.getConstructor().newInstance();
             int cost = b.getCost();
             return cost;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             return 0;
         }
     }
@@ -207,30 +206,30 @@ abstract class BuildingPanel extends LimitedHeightPanel implements GameInformati
 
 class MilitaryBuildingPanel extends BuildingPanel {
     private JButton recruitButton;
-    
+
     MilitaryBuildingPanel(City city, Class<?> buildingClass, GameView gameView) {
         super(city, buildingClass, gameView);
-        
+
         this.recruitButton = new JButton();
         this.recruitButton.setBackground(new Color(13, 202, 240));
         this.recruitButton.setAlignmentX(LEFT_ALIGNMENT);
         recruitButton.addMouseListener(new RecruitButtonListener(this, gameView));
-        
+
         getButtonsContainer().add(this.recruitButton);
     }
 
     public void updateGameInformation() {
         super.updateGameInformation();
-        MilitaryBuilding building = (MilitaryBuilding)this.getBuilding();
+        MilitaryBuilding building = (MilitaryBuilding) this.getBuilding();
         if (building == null) {
             this.recruitButton.setVisible(false);
         } else {
             this.recruitButton.setVisible(true);
             Class<?> unitType = building.getUnitType();
-            this.recruitButton.setText("Recruit " + unitType.getSimpleName() + " (" + building.getRecruitmentCost() + " gold)");
+            this.recruitButton
+                    .setText("Recruit " + unitType.getSimpleName() + " (" + building.getRecruitmentCost() + " gold)");
         }
-        
-        
+
     }
 }
 
@@ -241,7 +240,7 @@ class EconomicalBuildingPanel extends BuildingPanel {
 }
 
 public class CityView extends LimitedHeightPanel implements GameInformationView {
-    
+
     final private City city;
     private JLabel cityNameLabel;
     private JLabel militaryBuildingsLabel;
@@ -254,12 +253,11 @@ public class CityView extends LimitedHeightPanel implements GameInformationView 
     private Game game;
     private GameView gameView;
 
-
     public CityView(City city, GameView gameView, Game game) {
         this.city = city;
         this.gameView = gameView;
         this.game = game;
-        
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setOpaque(false);
         this.setBorder(new EmptyBorder(0, 5, 5, 5));
@@ -268,8 +266,7 @@ public class CityView extends LimitedHeightPanel implements GameInformationView 
         cityNameLabel.setFont(new Font(Font.SERIF, Font.BOLD, 30));
         cityNameLabel.setAlignmentX(LEFT_ALIGNMENT);
         add(cityNameLabel);
-        
-        
+
         this.buildingPanels = new ArrayList<>();
 
         militaryBuildingsLabel = new JLabel("Military Buildings");
@@ -295,7 +292,6 @@ public class CityView extends LimitedHeightPanel implements GameInformationView 
         defendingArmyLabel.setAlignmentX(LEFT_ALIGNMENT);
         add(defendingArmyLabel);
 
-
         defendingArmyView = new ArmyView(city.getDefendingArmy(), gameView, game);
         defendingArmyView.setInsideCityView(true);
         defendingArmyView.setAlignmentX(LEFT_ALIGNMENT);
@@ -310,7 +306,7 @@ public class CityView extends LimitedHeightPanel implements GameInformationView 
         stationedArmiesContainer.setLayout(new BoxLayout(stationedArmiesContainer, BoxLayout.Y_AXIS));
         stationedArmiesContainer.setOpaque(false);
         stationedArmiesContainer.setAlignmentX(LEFT_ALIGNMENT);
-        
+
         add(stationedArmiesContainer);
 
         updateStationedArmies();
@@ -328,7 +324,6 @@ public class CityView extends LimitedHeightPanel implements GameInformationView 
         return city;
     }
 
-    
     public void updateGameInformation() {
         for (BuildingPanel buildingPanel : buildingPanels) {
             buildingPanel.updateGameInformation();

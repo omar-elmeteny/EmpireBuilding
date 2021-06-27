@@ -48,7 +48,7 @@ class UnitButtonListener extends MouseInputAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        battleView.unitClicked(unit, (JButton)e.getComponent());
+        battleView.unitClicked(unit, (JButton) e.getComponent());
     }
 }
 
@@ -56,7 +56,6 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
     private final GameView gameView;
     private final Army attackingArmy;
     private final Army defendingArmy;
-
 
     private JPanel armiesContainer;
     private JLabel attackingArmyLabel;
@@ -68,7 +67,7 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
     private MaxWidthButton closeBattleViewButton;
     private JScrollPane battleLogScroller;
     private Unit attackingUnit;
-    
+
     public BattleView(GameView gameView, Army attackingArmy, Army defendingArmy) {
         super();
         this.gameView = gameView;
@@ -77,9 +76,9 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
 
         this.setOpaque(false);
         this.setLayout(new BorderLayout());
-        
+
         GridBagLayout gridbag = new GridBagLayout();
-        
+
         this.armiesContainer = new JPanel();
         this.armiesContainer.setOpaque(false);
 
@@ -148,14 +147,14 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
 
         this.battleLog = new JTextArea();
         this.battleLog.setEditable(false);
-        
+
         this.battleLogScroller = new JScrollPane(this.battleLog);
         this.battleLogScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.battleLogScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         this.battleLogScroller.setOpaque(false);
         this.battleLogScroller.getViewport().setOpaque(false);
         this.bottomPanel.add(this.battleLogScroller);
-        
+
         this.closeBattleViewButton = new MaxWidthButton();
         this.closeBattleViewButton.setBackground(new Color(86, 94, 100));
         this.closeBattleViewButton.setForeground(Color.WHITE);
@@ -178,7 +177,7 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
 
     public void unitClicked(Unit unit, JButton component) {
         if (attackingUnit == null) {
-            if(unit.getParentArmy() == defendingArmy) {
+            if (unit.getParentArmy() == defendingArmy) {
                 return;
             }
             attackingUnit = unit;
@@ -191,15 +190,13 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
         }
     }
 
-
     private void fillArmyPanel(JPanel panel, Army army) {
         panel.removeAll();
-        
-       
 
         for (Unit unit : army.getUnits()) {
             MaxWidthButton button = new MaxWidthButton();
-            String text = unit.getCurrentSoldierCount() + " level " + unit.getLevel() + " " + unit.getClass().getSimpleName();
+            String text = unit.getCurrentSoldierCount() + " level " + unit.getLevel() + " "
+                    + unit.getClass().getSimpleName();
             if (unit.getCurrentSoldierCount() > 1) {
                 if (text.endsWith("y")) {
                     text = text.substring(0, text.length() - 1) + "ies";
@@ -207,8 +204,7 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
                     text += "s";
                 }
             }
-            
-            
+
             try {
                 BufferedImage image = ImageIO.read(new File(unit.getClass().getSimpleName().toLowerCase() + ".png"));
                 Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
@@ -219,10 +215,9 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            
+
             button.setText(text);
-            button.setBackground(panel == attackingArmyPanel ? 
-                new Color(40, 167, 69) : new Color(220, 53, 69));
+            button.setBackground(panel == attackingArmyPanel ? new Color(40, 167, 69) : new Color(220, 53, 69));
             button.setForeground(Color.WHITE);
             button.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
             button.addMouseListener(new UnitButtonListener(this, unit));
@@ -236,7 +231,8 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
         this.fillArmyPanel(defendingArmyPanel, defendingArmy);
         armiesContainer.validate();
         armiesContainer.repaint();
-        this.closeBattleViewButton.setVisible(attackingArmy.getUnits().size() == 0 || defendingArmy.getUnits().size() == 0); 
+        this.closeBattleViewButton
+                .setVisible(attackingArmy.getUnits().size() == 0 || defendingArmy.getUnits().size() == 0);
     }
 
 }

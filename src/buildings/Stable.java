@@ -15,10 +15,7 @@ public class Stable extends MilitaryBuilding {
 
 	@Override
 	public Unit recruit() throws BuildingInCoolDownException, MaxRecruitedException {
-		if(isCoolDown())
-			throw new BuildingInCoolDownException("Building is cooling down, please wait for the next turn");
-		if(getCurrentRecruit()==getMaxRecruit())
-			throw new MaxRecruitedException("Max recruited units reached, please wait till next turn. ");
+		checkCanRecruit();
 		setCurrentRecruit(getCurrentRecruit() + 1);
 		if (getLevel() == 1)
 			return new Cavalry(1, 40, 0.6, 0.7, 0.75);
@@ -27,7 +24,6 @@ public class Stable extends MilitaryBuilding {
 			return new Cavalry(2, 40, 0.6, 0.7, 0.75);
 		else
 			return new Cavalry(3, 60, 0.7, 0.8, 0.9);
-
 	}
 
 	@Override

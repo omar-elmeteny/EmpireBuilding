@@ -7,13 +7,13 @@ public class PlayerMustAttackCityException extends EmpireException {
 
     public PlayerMustAttackCityException(City city) {
         this.city = city;
-		
-	}
 
-	public PlayerMustAttackCityException(City city, String s) {
-		super(s);
+    }
+
+    public PlayerMustAttackCityException(City city, String s) {
+        super(s);
         this.city = city;
-	}
+    }
 
     public City getCity() {
         return city;

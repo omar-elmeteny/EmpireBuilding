@@ -7,7 +7,6 @@ import javax.swing.JOptionPane;
 
 import engine.Game;
 
-
 public class MainWindow extends JFrame {
 
     private HomeView homeView;

@@ -3,6 +3,7 @@ package units;
 import java.util.ArrayList;
 
 import exceptions.MaxCapacityException;
+import exceptions.RelocateNotAllowedException;
 
 public class Army {
 	private Status currentStatus;
@@ -31,9 +32,17 @@ public class Army {
 		this.enemy = enemy;
 	}
 
-	public void relocateUnit(Unit unit) throws MaxCapacityException {
+	public void relocateUnit(Unit unit) throws MaxCapacityException, RelocateNotAllowedException {
+		if (unit.getParentArmy() == this) {
+			return;
+		}
 		if (units.size() == maxToHold)
-			throw new MaxCapacityException("Maximum capacity reached");
+			throw new MaxCapacityException("Cannot relocate unit because maximum capacity for target army reached.");
+		if (unit.getParentArmy().getCurrentStatus() != Status.IDLE || getCurrentStatus() != Status.IDLE
+				|| !unit.getParentArmy().getCurrentLocation().equals(getCurrentLocation())) {
+			throw new RelocateNotAllowedException(
+					"To relocate a unit from one army to another, both armies must be idle and at the same location.");
+		}
 		units.add(unit);
 		unit.getParentArmy().units.remove(unit);
 		unit.setParentArmy(this);

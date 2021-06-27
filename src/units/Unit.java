@@ -22,7 +22,7 @@ public abstract class Unit {
 
 	public AttackResult attack(Unit target) throws FriendlyFireException {
 		if (getParentArmy().isEnemy() == target.getParentArmy().isEnemy())
-			throw new FriendlyFireException("Cannot attack a friendly unit");
+			throw new FriendlyFireException("Cannot attack a friendly unit.");
 		boolean attackerIsPlayer = target.getParentArmy().isEnemy();
 		double factor = getAttackFactor(target);
 		int soldiersDead = (int) (factor * getCurrentSoldierCount());

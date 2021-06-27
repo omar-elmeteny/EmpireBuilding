@@ -186,7 +186,7 @@ public class ArmyView extends LimitedHeightPanel implements GameInformationView 
             GridLayout grid = new GridLayout();
             grid.setColumns(1);
             grid.setRows(3);
-            
+
             buttonContainer = new LimitedHeightPanel();
             buttonContainer.setLayout(grid);
             buttonContainer.setOpaque(false);

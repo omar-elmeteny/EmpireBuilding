@@ -44,7 +44,8 @@ public class Player {
 
 						Unit u = b.recruit();
 						if (treasury < b.getRecruitmentCost())
-							throw new NotEnoughGoldException("Not enough gold");
+							throw new NotEnoughGoldException("Not enough gold to recruit a " + type + ". Gold required is " + b.getRecruitmentCost()
+							+ " while gold in treasury is only " + treasury + ".");
 						treasury -= b.getRecruitmentCost();
 						u.setParentArmy(c.getDefendingArmy());
 						c.getDefendingArmy().getUnits().add(u);
@@ -60,20 +61,20 @@ public class Player {
 			if (c.getName().equals(cityName)) {
 				Building b = null;
 				switch (type.toLowerCase()) {
-				case "archeryrange":
-					b = new ArcheryRange();
-					break;
-				case "barracks":
-					b = new Barracks();
-					break;
-				case "stable":
-					b = new Stable();
-					break;
-				case "farm":
-					b = new Farm();
-					break;
-				case "market":
-					b = new Market();
+					case "archeryrange":
+						b = new ArcheryRange();
+						break;
+					case "barracks":
+						b = new Barracks();
+						break;
+					case "stable":
+						b = new Stable();
+						break;
+					case "farm":
+						b = new Farm();
+						break;
+					case "market":
+						b = new Market();
 				}
 				if (type.equals("Farm") || type.equals("Market")) {
 					for (EconomicBuilding e : c.getEconomicalBuildings()) {
@@ -91,7 +92,8 @@ public class Player {
 					}
 				}
 				if (treasury < b.getCost())
-					throw new NotEnoughGoldException("not enough gold");
+					throw new NotEnoughGoldException("Not enough gold to recruit a " + b.getName() + ". Gold required is " + b.getCost()
+					+ " while gold in treasury is only " + treasury + ".");
 				treasury -= b.getCost();
 				if (type.toLowerCase().equals("farm") || type.toLowerCase().equals("market"))
 					c.getEconomicalBuildings().add((EconomicBuilding) b);
@@ -106,7 +108,8 @@ public class Player {
 	public void upgradeBuilding(Building b)
 			throws NotEnoughGoldException, BuildingInCoolDownException, MaxLevelException {
 		if (treasury < b.getUpgradeCost())
-			throw new NotEnoughGoldException("not enough gold");
+			throw new NotEnoughGoldException("Not enough gold to ugprade " + b.getName() + ". Gold required is " + b.getUpgradeCost()
+				+ " while gold in treasury is only " + treasury + ".");
 		int originalCost = b.getUpgradeCost();
 		b.upgrade();
 		treasury -= originalCost;
@@ -122,12 +125,12 @@ public class Player {
 
 	public void laySiege(Army army, City city) throws TargetNotReachedException, FriendlyCityException {
 		if (army.getCurrentLocation().equals("onRoad")) {
-			throw new TargetNotReachedException("Target not reached");
+			throw new TargetNotReachedException("Cannot lay siege while army has not reached its target.");
 		}
 		if (controlledCities.contains(city))
-			throw new FriendlyCityException("You can't attack a friendly city");
+			throw new FriendlyCityException(city.getName() + " is a friendly city. You can't lay siege to a friendly city.");
 		if (!army.getCurrentLocation().equals(city.getName()))
-			throw new TargetNotReachedException("Target not reached");
+			throw new TargetNotReachedException("Cannot lay siege to " + city.getName() + " while army is at " + army.getCurrentLocation() + ". Target the city first, when wait until the army reaches it.");
 		army.setCurrentStatus(Status.BESIEGING);
 		city.setUnderSiege(true);
 		city.setTurnsUnderSiege(0);

@@ -194,12 +194,13 @@ public class Game {
 			if (c.isUnderSiege()) {
 				if (c.getTurnsUnderSiege() >= 3) {
 					if (getSiegingArmy(c) != null) {
-						throw new PlayerMustAttackCityException(c, "City " + c.getName() + " has been undersiege for "
-							+ c.getTurnsUnderSiege() + " turns. You must either initial a manual attack or auto resolve battle.");
+						throw new PlayerMustAttackCityException(c,
+								"City " + c.getName() + " has been undersiege for " + c.getTurnsUnderSiege()
+										+ " turns. You must either initial a manual attack or auto resolve battle.");
 					} else {
 						c.setUnderSiege(false);
 					}
-				}	
+				}
 			}
 		}
 
@@ -326,5 +327,4 @@ public class Game {
 	public void setCurrentTurnCount(int currentTurnCount) {
 		this.currentTurnCount = currentTurnCount;
 	}
-
 }

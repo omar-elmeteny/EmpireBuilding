@@ -30,7 +30,6 @@ public class AttackResult {
         this.attackerIsPlayer = attackerIsPlayer;
     }
 
-    
     public Unit getDefender() {
         return defender;
     }
@@ -57,12 +56,8 @@ public class AttackResult {
 
     @Override
     public String toString() {
-        return getAttackerName() + "'s " 
-            + attacker.getClass().getSimpleName() 
-            + " attacked " + getDefenderName() + "'s " 
-            + defender.getClass().getSimpleName()
-            + " and killed "
-            + soldiersKilled 
-            + (soldiersKilled == 1 ? " soldier." : " soldiers.");
+        return getAttackerName() + "'s " + attacker.getClass().getSimpleName() + " attacked " + getDefenderName()
+                + "'s " + defender.getClass().getSimpleName() + " and killed " + soldiersKilled
+                + (soldiersKilled == 1 ? " soldier." : " soldiers.");
     }
 }
