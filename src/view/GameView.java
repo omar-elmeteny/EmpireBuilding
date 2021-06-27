@@ -57,6 +57,7 @@ public class GameView extends JPanel implements GameInformationView {
     private Army targetingCity;
     private Unit relocatingUnit;
     private MainWindow mainWindow;
+    private BattleView battleView;
 
     public GameView(Game game, MainWindow mainWindow) throws IOException {
         super();
@@ -89,7 +90,7 @@ public class GameView extends JPanel implements GameInformationView {
         targetingLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
         targetingLabel.setForeground(Color.WHITE);
         targetingLabel.setOpaque(true);
-        targetingLabel.setVisible(false);
+        targetingLabel.setText(" ");
         bottomContainer.add(targetingLabel, BorderLayout.NORTH);
 
         sideViewContainer = new LimitedHeightPanel();
@@ -106,6 +107,9 @@ public class GameView extends JPanel implements GameInformationView {
     }
 
     public void endTurn() {
+        if (this.isInBattleView()) {
+            return;
+        }
         try {
             game.endTurn();
             updateGameInformation();
@@ -150,7 +154,7 @@ public class GameView extends JPanel implements GameInformationView {
     }
 
     public void attackCity(Army army) {
-        if (isSideViewBattleView()) {
+        if (isInBattleView()) {
             return;
         }
         if (army.getCurrentLocation().equals("onRoad")) {
@@ -163,8 +167,10 @@ public class GameView extends JPanel implements GameInformationView {
             return;
         }
         removeSideView();
-        sideView = new BattleView(this, army, city.getDefendingArmy());
-        sideViewContainer.add(sideView, BorderLayout.CENTER);
+        battleView = new BattleView(this, army, city.getDefendingArmy());
+        // sideViewContainer.add(sideView, BorderLayout.CENTER);
+        this.mapView.setVisible(false);
+        add(battleView, BorderLayout.CENTER);
         validate();
     }
 
@@ -172,7 +178,6 @@ public class GameView extends JPanel implements GameInformationView {
         relocatingUnit = unit;
         targetingCity = null;
         targetingLabel.setText("Please click on the map to select the army you want to relocate this " + unit.getClass().getSimpleName() + " to.");
-        targetingLabel.setVisible(true);
     }
 
     public void armyClicked(Army army) {
@@ -206,7 +211,7 @@ public class GameView extends JPanel implements GameInformationView {
     }
 
     private void showArmyView(Army army) {
-        if (isSideViewBattleView()) {
+        if (isInBattleView()) {
             return;
         }
         if (isSideViewArmyView(army)) {
@@ -237,7 +242,6 @@ public class GameView extends JPanel implements GameInformationView {
         targetingCity = army;
         relocatingUnit = null;
         targetingLabel.setText("Please click on the map to select the city you want this army to target.");
-        targetingLabel.setVisible(true);
     }
 
     public void cityClicked(String cityName) {
@@ -258,7 +262,7 @@ public class GameView extends JPanel implements GameInformationView {
     }
 
     private void showCityView(String cityName) {
-        if (isSideViewBattleView()) {
+        if (isInBattleView()) {
             return;
         }
         for (City city : game.getPlayer().getControlledCities()) {
@@ -304,13 +308,15 @@ public class GameView extends JPanel implements GameInformationView {
         this.summaryView.updateGameInformation();
         this.mapView.updateGameInformation();
         if (this.sideView != null) {
-            ((GameInformationView) this.sideView).updateGameInformation();
-            
+            ((GameInformationView) this.sideView).updateGameInformation();            
+        }
+        if (this.battleView != null) {
+            this.battleView.updateGameInformation();
         }
     }
 
     private void resetTargeting() {
-        targetingLabel.setVisible(false);
+        targetingLabel.setText(" ");
         targetingCity = null;
         relocatingUnit = null;
     }
@@ -335,8 +341,8 @@ public class GameView extends JPanel implements GameInformationView {
             && ((ArmyView)sideView).getArmy() == army;
     }
     
-    private boolean isSideViewBattleView() {
-        return sideView != null && sideView.getClass() == BattleView.class;
+    private boolean isInBattleView() {
+        return battleView != null;
     }
 
 	public ArrayList<AttackResult> attackUnit(Unit attackingUnit, Unit target) {
@@ -366,7 +372,9 @@ public class GameView extends JPanel implements GameInformationView {
 	}
 
     public void closeBattleView() {
-        this.removeSideView();
+        this.remove(battleView);
+        battleView = null;
+        this.mapView.setVisible(true);
     }
 
     private void checkForVictoryOrDefeat() {
