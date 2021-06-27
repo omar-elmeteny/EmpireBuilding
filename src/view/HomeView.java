@@ -1,7 +1,9 @@
 package view;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,6 +17,8 @@ import engine.Game;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -108,10 +112,11 @@ public class HomeView extends JPanel {
         this.add(nameContainer);
 
         nameLabel = new JLabel("Your Name: ");
-        nameLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
         nameContainer.add(nameLabel, BorderLayout.WEST);
 
         nameField = new JTextField();
+        nameField.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
         nameContainer.add(nameField, BorderLayout.CENTER);
 
         this.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -126,12 +131,21 @@ public class HomeView extends JPanel {
         cityButtons = new JButton[cityNames.size()];
         for (int i = 0; i < cityNames.size(); i++) {
             cityButtons[i] = new JButton();
-            cityButtons[i].setBackground(new Color(86, 94, 100));
-            cityButtons[i].setForeground(Color.WHITE);
-            cityButtons[i].setFont(new Font(Font.SERIF, Font.BOLD, 40));
-            cityButtons[i].setText(cityNames.get(i));
-            cityButtons[i].addMouseListener(new SelectCityButtonListener(this));
-            citiesContainer.add(cityButtons[i]);
+            JButton button = cityButtons[i];
+            button.setBackground(new Color(86, 94, 100));
+            button.setForeground(Color.WHITE);
+            button.setFont(new Font(Font.SERIF, Font.BOLD, 40));
+            button.setText(cityNames.get(i));
+            button.addMouseListener(new SelectCityButtonListener(this));
+            button.setVerticalTextPosition(SwingConstants.BOTTOM);
+            button.setHorizontalTextPosition(SwingConstants.CENTER);
+            
+            BufferedImage image = ImageIO.read(new File(cityNames.get(i) + ".png"));
+            Image scaledImage = image.getScaledInstance(250, 250, Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(scaledImage);
+            
+            button.setIcon(icon);
+            citiesContainer.add(button);
         }
         this.add(citiesContainer);
 
@@ -143,7 +157,7 @@ public class HomeView extends JPanel {
         startGameButton = new JButton();
         startGameButton.setBackground(new Color(20, 108, 76));
         startGameButton.setForeground(Color.WHITE);
-        startGameButton.setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        startGameButton.setFont(new Font(Font.SERIF, Font.BOLD, 30));
         startGameButton.setText("Start Game");
         startGameButton.addMouseListener(new StartGameButtonListener(mainWindow));
         startButtonContainer.add(startGameButton, BorderLayout.CENTER);
