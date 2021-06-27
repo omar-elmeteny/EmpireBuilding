@@ -382,7 +382,7 @@ public class GameView extends JPanel implements GameInformationView {
     private void checkForVictoryOrDefeat() {
         String message;
         String title;
-        if (game.getCurrentTurnCount() == game.getMaxTurnCount()) {
+        if (game.getCurrentTurnCount() > game.getMaxTurnCount()) {
             message = "Sorry you lost the game! Better luck next time. Do you want to start another game?";
             title = "Defeat";
 
