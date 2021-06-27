@@ -44,7 +44,9 @@ public class Player {
 
 						Unit u = b.recruit();
 						if (treasury < b.getRecruitmentCost())
-							throw new NotEnoughGoldException("Not enough gold to recruit a " + type + ". Gold required is " + b.getRecruitmentCost()
+							throw new NotEnoughGoldException("Not enough gold to recruit " 
+								+ (type.toLowerCase().equals("cavalry") ? "a " : "an ")
+								+ type + ". Gold required is " + b.getRecruitmentCost()
 							+ " while gold in treasury is only " + treasury + ".");
 						treasury -= b.getRecruitmentCost();
 						u.setParentArmy(c.getDefendingArmy());
@@ -92,7 +94,9 @@ public class Player {
 					}
 				}
 				if (treasury < b.getCost())
-					throw new NotEnoughGoldException("Not enough gold to recruit a " + b.getName() + ". Gold required is " + b.getCost()
+					throw new NotEnoughGoldException("Not enough gold to build "
+					+ (b.getName().startsWith("A") ? "an " : "a ")
+					+ b.getName() + ". Gold required is " + b.getCost()
 					+ " while gold in treasury is only " + treasury + ".");
 				treasury -= b.getCost();
 				if (type.toLowerCase().equals("farm") || type.toLowerCase().equals("market"))

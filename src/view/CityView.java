@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -91,6 +92,7 @@ abstract class BuildingPanel extends LimitedHeightPanel implements GameInformati
         this.city = city;
         this.type = buildingClass.getSimpleName();
         this.setOpaque(false);
+        this.setBorder(BorderFactory.createEtchedBorder());
         this.buildingClass = buildingClass;
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -120,13 +122,13 @@ abstract class BuildingPanel extends LimitedHeightPanel implements GameInformati
         this.buttonsContainer.setLayout(new BoxLayout(this.buttonsContainer, BoxLayout.Y_AXIS));
         this.add(buttonsContainer);
 
-        this.upgradeButton = new JButton();
+        this.upgradeButton = new MaxWidthButton();
         this.upgradeButton.setBackground(new Color(13, 202, 240));
         this.upgradeButton.addMouseListener(new UpgradeButtonListener(this, gameView));
         this.upgradeButton.setAlignmentX(LEFT_ALIGNMENT);
         buttonsContainer.add(this.upgradeButton);
 
-        this.buildButton = new JButton();
+        this.buildButton = new MaxWidthButton();
         this.buildButton.setBackground(new Color(13, 202, 240));
         this.buildButton.addMouseListener(new BuildButtonListener(type, city, gameView));
         this.buildButton.setAlignmentX(LEFT_ALIGNMENT);
@@ -210,7 +212,7 @@ class MilitaryBuildingPanel extends BuildingPanel {
     MilitaryBuildingPanel(City city, Class<?> buildingClass, GameView gameView) {
         super(city, buildingClass, gameView);
 
-        this.recruitButton = new JButton();
+        this.recruitButton = new MaxWidthButton();
         this.recruitButton.setBackground(new Color(13, 202, 240));
         this.recruitButton.setAlignmentX(LEFT_ALIGNMENT);
         recruitButton.addMouseListener(new RecruitButtonListener(this, gameView));
