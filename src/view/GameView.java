@@ -103,6 +103,7 @@ public class GameView extends JPanel implements GameInformationView {
         sideViewScrollPane.getViewport().setOpaque(false);
         sideViewScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         sideViewScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        sideViewScrollPane.setPreferredSize(new Dimension(320, Integer.MAX_VALUE));
         add(sideViewScrollPane, BorderLayout.EAST);
 
     }

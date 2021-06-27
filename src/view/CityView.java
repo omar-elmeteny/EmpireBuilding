@@ -314,6 +314,12 @@ public class CityView extends LimitedHeightPanel implements GameInformationView 
         updateStationedArmies();
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension d = super.getPreferredSize();
+        return new Dimension(300, d.height);
+    }
+
     private void addBuildingPanel(BuildingPanel buildingPanel) {
         buildingPanel.setAlignmentX(LEFT_ALIGNMENT);
         add(buildingPanel);
