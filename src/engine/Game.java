@@ -243,8 +243,12 @@ public class Game {
 		else {
 			player.setFood(0);
 			for (Army a : player.getControlledArmies()) {
-
 				for (Unit u : a.getUnits()) {
+					u.setCurrentSoldierCount(u.getCurrentSoldierCount() - (int) (u.getCurrentSoldierCount() * 0.1));
+				}
+			}
+			for (City c : player.getControlledCities()) {
+				for (Unit u : c.getDefendingArmy().getUnits()) {
 					u.setCurrentSoldierCount(u.getCurrentSoldierCount() - (int) (u.getCurrentSoldierCount() * 0.1));
 				}
 			}
