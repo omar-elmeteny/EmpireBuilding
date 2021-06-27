@@ -103,7 +103,7 @@ public class GameView extends JPanel implements GameInformationView {
         sideViewScrollPane.getViewport().setOpaque(false);
         sideViewScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         sideViewScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        sideViewScrollPane.setPreferredSize(new Dimension(320, Integer.MAX_VALUE));
+        sideViewScrollPane.setPreferredSize(new Dimension(350, Integer.MAX_VALUE));
         add(sideViewScrollPane, BorderLayout.EAST);
 
     }
@@ -173,9 +173,10 @@ public class GameView extends JPanel implements GameInformationView {
             return;
         }
         removeSideView();
+        
         battleView = new BattleView(this, army, city.getDefendingArmy());
-        // sideViewContainer.add(sideView, BorderLayout.CENTER);
-        this.mapView.setVisible(false);
+        sideViewScrollPane.setVisible(false);
+        mapView.setVisible(false);
         add(battleView, BorderLayout.CENTER);
         validate();
     }
@@ -332,6 +333,7 @@ public class GameView extends JPanel implements GameInformationView {
             sideViewContainer.remove(sideView);
             sideView = null;
             validate();
+            repaint();
         }
     }
 
@@ -376,7 +378,9 @@ public class GameView extends JPanel implements GameInformationView {
     public void closeBattleView() {
         this.remove(battleView);
         battleView = null;
-        this.mapView.setVisible(true);
+        mapView.setVisible(true);
+        sideViewScrollPane.setVisible(true);
+        removeSideView();
     }
 
     private void checkForVictoryOrDefeat() {

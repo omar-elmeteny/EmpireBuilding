@@ -153,6 +153,7 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
         this.battleLogScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         this.battleLogScroller.setOpaque(false);
         this.battleLogScroller.getViewport().setOpaque(false);
+        this.battleLogScroller.setAlignmentX(LEFT_ALIGNMENT);
         this.bottomPanel.add(this.battleLogScroller);
 
         this.closeBattleViewButton = new MaxWidthButton();
@@ -162,6 +163,7 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
         this.closeBattleViewButton.setFont(new Font(Font.SERIF, Font.BOLD, 18));
         this.closeBattleViewButton.addMouseListener(new CloseBattleViewButtonListener(gameView));
         this.closeBattleViewButton.setText("Close Battle View");
+        this.closeBattleViewButton.setAlignmentX(LEFT_ALIGNMENT);
         this.bottomPanel.add(this.closeBattleViewButton);
 
         updateGameInformation();
@@ -207,7 +209,7 @@ public class BattleView extends LimitedHeightPanel implements GameInformationVie
 
             try {
                 BufferedImage image = ImageIO.read(new File(unit.getClass().getSimpleName().toLowerCase() + ".png"));
-                Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                Image scaledImage = image.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
                 ImageIcon icon = new ImageIcon(scaledImage);
                 button.setIcon(icon);
                 button.setVerticalTextPosition(SwingConstants.BOTTOM);

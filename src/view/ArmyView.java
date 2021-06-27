@@ -235,7 +235,7 @@ public class ArmyView extends LimitedHeightPanel implements GameInformationView 
     @Override
     public Dimension getPreferredSize() {
         Dimension d = super.getPreferredSize();
-        return new Dimension(300, d.height);
+        return new Dimension(330, d.height);
     }
 
     public void setInsideCityView(boolean insideCityView) {
