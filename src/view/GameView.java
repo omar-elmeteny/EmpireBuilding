@@ -136,6 +136,10 @@ public class GameView extends JPanel implements GameInformationView {
                 if (attacker.getUnits().size() == 0) {
                     JOptionPane.showMessageDialog(this, "Your army lost to " + city.getName() + "'s army.",
                             "Auto resolve complete", JOptionPane.INFORMATION_MESSAGE);
+                    game.getPlayer().getControlledArmies().remove(attacker);
+                    if (isSideViewArmyView(attacker)) {
+                        removeSideView();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "Your won the battle and occupied " + city.getName() + ".",
                             "Auto resolve complete", JOptionPane.INFORMATION_MESSAGE);
@@ -163,17 +167,19 @@ public class GameView extends JPanel implements GameInformationView {
             return;
         }
         if (army.getCurrentLocation().equals("onRoad")) {
-            JOptionPane.showMessageDialog(this, "Cannot attack a city while army has not reached its target.", "Command failed", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Cannot attack a city while army has not reached its target.",
+                    "Command failed", JOptionPane.WARNING_MESSAGE);
             return;
         }
         City city = game.findCityByName(army.getCurrentLocation());
         if (game.getPlayer().getControlledCities().contains(city)) {
-            JOptionPane.showMessageDialog(this, city.getName() + " is a friendly city. You can't lay siege to a friendly city.", "Command failed",
+            JOptionPane.showMessageDialog(this,
+                    city.getName() + " is a friendly city. You can't lay siege to a friendly city.", "Command failed",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
         removeSideView();
-        
+
         battleView = new BattleView(this, army, city.getDefendingArmy());
         sideViewScrollPane.setVisible(false);
         mapView.setVisible(false);
@@ -276,10 +282,12 @@ public class GameView extends JPanel implements GameInformationView {
             if (isSideViewCityView(city)) {
                 return;
             }
-            removeSideView();
-            sideView = new CityView(city, this, game);
-            sideViewContainer.add(sideView, BorderLayout.CENTER);
-            validate();
+            if (city.getName().equals(cityName)) {
+                removeSideView();
+                sideView = new CityView(city, this, game);
+                sideViewContainer.add(sideView, BorderLayout.CENTER);
+                validate();
+            }
         }
     }
 
