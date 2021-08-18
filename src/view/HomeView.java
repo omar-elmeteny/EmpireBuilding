@@ -140,7 +140,7 @@ public class HomeView extends JPanel {
             button.setVerticalTextPosition(SwingConstants.BOTTOM);
             button.setHorizontalTextPosition(SwingConstants.CENTER);
 
-            BufferedImage image = ImageIO.read(new File(cityNames.get(i) + ".png"));
+            BufferedImage image = ImageIO.read(new File(cityNames.get(i).toLowerCase() + ".png"));
             Image scaledImage = image.getScaledInstance(250, 250, Image.SCALE_SMOOTH);
             ImageIcon icon = new ImageIcon(scaledImage);
 
