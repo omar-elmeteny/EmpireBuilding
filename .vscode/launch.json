@@ -9,7 +9,10 @@
             "name": "Launch Program",
             "request": "launch",
             "mainClass": "view.Program",
-            "projectName": "EmpireBuilding"
+            "projectName": "EmpireBuilding",
+            "env": {
+                "GDK_SCALE": "3.2"
+            }
         }
     ]
 }
