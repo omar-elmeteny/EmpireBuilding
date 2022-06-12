@@ -3,5 +3,6 @@
         "**/.classpath": false,
         "**/.project": false,
         "**/.settings": false,
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
